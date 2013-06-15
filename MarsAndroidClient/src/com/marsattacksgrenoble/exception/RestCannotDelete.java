@@ -1,4 +1,4 @@
-package com.marsattack.exception;
+package com.marsattacksgrenoble.exception;
 
 public class RestCannotDelete extends Exception {
 	private static final long serialVersionUID = 1L;

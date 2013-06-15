@@ -1,4 +1,4 @@
-package com.marsattack.model;
+package com.marsattacksgrenoble.model;
 
 /**
  * Definition of a tower

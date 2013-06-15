@@ -1,11 +1,11 @@
-package com.marsattack.service;
+package com.marsattacksgrenoble.service;
 
 import java.util.List;
 
-import com.marsattack.exception.RestCannotDelete;
-import com.marsattack.exception.RestCannotGetData;
-import com.marsattack.exception.RestCannotUpdateData;
-import com.marsattack.model.Tower;
+import com.marsattacksgrenoble.exception.RestCannotDelete;
+import com.marsattacksgrenoble.exception.RestCannotGetData;
+import com.marsattacksgrenoble.exception.RestCannotUpdateData;
+import com.marsattacksgrenoble.model.Tower;
 
 /**
  * Interface for the tower service

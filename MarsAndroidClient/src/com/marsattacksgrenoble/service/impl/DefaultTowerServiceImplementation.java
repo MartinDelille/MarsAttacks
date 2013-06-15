@@ -1,4 +1,4 @@
-package com.marsattack.service.impl;
+package com.marsattacksgrenoble.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,12 +7,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.marsattack.exception.RestCannotDelete;
-import com.marsattack.exception.RestCannotGetData;
-import com.marsattack.exception.RestCannotUpdateData;
-import com.marsattack.model.Tower;
-import com.marsattack.service.TowerService;
-import com.marsattack.utils.HttpUtils;
+import com.marsattacksgrenoble.exception.RestCannotDelete;
+import com.marsattacksgrenoble.exception.RestCannotGetData;
+import com.marsattacksgrenoble.exception.RestCannotUpdateData;
+import com.marsattacksgrenoble.model.Tower;
+import com.marsattacksgrenoble.service.TowerService;
+import com.marsattacksgrenoble.utils.HttpUtils;
 
 /**
  * Default implementation of {@link TowerService}

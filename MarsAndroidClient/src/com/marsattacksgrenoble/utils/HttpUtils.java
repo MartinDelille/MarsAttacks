@@ -1,4 +1,4 @@
-package com.marsattack.utils;
+package com.marsattacksgrenoble.utils;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

@@ -2,3 +2,9 @@
 /android/.idea/
 /android/android.iml
 /android/local.properties
+/android/out
+/androidTest/.idea/
+/androidTest/android.iml
+/androidTest/local.properties
+/androidTest/out
+

@@ -4,7 +4,7 @@
 var TowerMap = (function() {
 
 	var TowerModel = function() {
-		this.endpoint = 'http://192.168.1.101:8080/towers';
+		this.endpoint = 'http://10.0.0.104:8080/towers';
 		this.towers = null;
 	};
 	TowerModel.prototype = {
@@ -30,13 +30,14 @@ var TowerMap = (function() {
 			this.towerPins = [];
 		},
 		draw: function() {
-			console.log(this.model);
-			var marker = new google.maps.Marker({
-				position:  new google.maps.LatLng(45.1667, 5.65),
-				map: map,
-				title: 'Tower 1'
-			});
-			this.towerPins.push(marker);
+			for (var i=0; i<this.model.towers.length; i++) {
+				var tower = this.model.towers[i];
+				var marker = new google.maps.Marker({
+					position:  new google.maps.LatLng(tower.latitude, tower.longitude),
+					map: map
+				});
+				this.towerPins.push(marker);				
+			}
 		}
 	};
 

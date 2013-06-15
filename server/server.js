@@ -18,28 +18,116 @@ var
     express = require("express"),
     
     /**
-     * MongoDB instance to connect on the MongoDB database instance
-     * @type {MongoDB}
-     */
-    //mongo = require("mongodb"),
-    
-    /**
      * Express application instance
      * @type {Application}
      */
-    app = express();
-
+    app = express(),
+    
+    towers = [
+        {
+            "id": 1,
+            "latitude": 45.190918,
+            "longitude": 5.712572,
+            "accuracy": 10,
+            "altitude": 300
+        },
+        {
+            "id": 2,
+            "latitude": 45.193918,
+            "longitude": 5.714572,
+            "accuracy": 10,
+            "altitude": 300
+        },
+        {
+            "id": 3,
+            "latitude": 45.192918,
+            "longitude": 5.713572,
+            "accuracy": 10,
+            "altitude": 300
+        }
+    ];
 
 console.log("Start to initialize our REST api");
 
 // REST api definition
 /**
- * List all stored scenarii
+ * Get a battle map
  */
-app.get("scenarii", function(req, res) {
-    res.send([{ name: "Basic scenario name" }]);
+app.get("/maps/:id", function(req, res) {
+    console.log("A request is done on /maps/:id");
+    res.send({
+        "id": req.params.id,
+        "name": "A default map",
+        "creationDate": 1371313428754,
+        "updateDate": 1371313428754,
+        "towers": towers
+    });
 });
- 
+
+/**
+ * Get all towers
+ */
+app.get("/towers", function(req, res) {
+    console.log("A request is done on /towers on GET");
+    res.send(towers);
+});
+
+/**
+ * Delete all towers
+ */
+app["delete"]("/towers", function(req, res) {
+    console.log("A request is done on /towers on DELETE");
+    res.send(towers);
+});
+
+/**
+ * Put a new tower
+ */
+app.put("/towers", function(req, res) {
+    console.log("A request is done on /towers on PUT");
+    
+    var tower = req.body;
+    tower.id = Date.now();
+    towers.push(tower);
+    
+    res.send(tower);
+});
+
+/**
+ * Update a tower
+ */
+app.post("/towers/:id", function(req, res) {
+    console.log("A request is done on /towers on POST");
+    
+    var i;
+    for(i = 0; i < towers.length; ++i) {
+        if(towers[i].id === req.params.id) {
+            towers[i] = req.body;
+            break;
+        }
+    }
+    
+    res.send(req.body);
+});
+
+/**
+ * Remove a tower
+ */
+app["delete"]("/towers/:id", function(req, res) {
+    console.log("A request is done on /towers on DELETE");
+    
+    var i, tower;
+    for(i = 0; i < towers.length; ++i) {
+        if(towers[i].id === req.params.id) {
+            tower = towers[i];
+            towers.splice(i, 1);
+            break;
+        }
+    }
+    
+    res.send(tower);
+});
+
 // And finally, run the server
 app.listen(8080);
 

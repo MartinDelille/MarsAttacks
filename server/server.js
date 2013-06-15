@@ -5,6 +5,7 @@
  * @author Julien Roche
  * 
  * @see http://coenraets.org/blog/2012/10/creating-a-rest-api-using-node-js-express-and-mongodb/
+ * @see http://mongodb.github.io/node-mongodb-native/
  */
 
 console.log("Start to initialize our server");
@@ -18,130 +19,130 @@ var
     express = require("express"),
     
     /**
+     * Mongo instance to communicate with the MongoDB instance
+     * @type {MongoDB}
+     */
+    mongo = require('mongodb'),
+    
+    /**
      * Express application instance
      * @type {Application}
      */
     app = express(),
     
-    towers = [
-        {
-            "id": 1,
-            "latitude": 45.190918,
-            "longitude": 5.712572,
-            "accuracy": 10,
-            "altitude": 300
-        },
-        {
-            "id": 2,
-            "latitude": 45.193918,
-            "longitude": 5.714572,
-            "accuracy": 10,
-            "altitude": 300
-        },
-        {
-            "id": 3,
-            "latitude": 45.192918,
-            "longitude": 5.713572,
-            "accuracy": 10,
-            "altitude": 300
-        }
-    ];
+    /**
+     * Instance for the Mongo Server
+     * @type {MongoServer}
+     */
+    mongoServer = mongo.Server("localhost", 27017, { auto_reconnect: true }),
+    
+    /**
+     * Instance for ou database
+     */
+    database = new mongo.Db("marsAttack", mongoServer, { w: 1 });
+    
+console.log("Open the database");
+database.open(function(err){
+    if(err){
+        process.exit(1);
+    }
+    
+    console.log("Database opened");
+    console.log("Start to initialize our REST api");
 
-console.log("Start to initialize our REST api");
-
-// REST api definition
-
-app.use(express.bodyParser()); // Set that we will use the Express parser (try to parse into JSON / form-url-encoded ...). See http://expressjs.com/api.html#bodyParser
-
-/**
- * Get a battle map
- */
-app.get("/maps/:id", function(req, res) {
-    console.log("A request is done on /maps/:id");
-    res.send({
-        "id": req.params.id,
-        "name": "A default map",
-        "creationDate": 1371313428754,
-        "updateDate": 1371313428754,
-        "towers": towers
+    // REST api definition
+    app.use(express.bodyParser()); // Set that we will use the Express parser (try to parse into JSON / form-url-encoded ...). See http://expressjs.com/api.html#bodyParser
+    
+    /**
+     * Get a battle map
+     */
+    app.get("/maps/:id", function(req, res) {
+        console.log("A request is done on /maps/:id");
+        database.collection("maps", function(err, collection) {
+            if(err){
+                res.send(400);
+                return;
+            }
+            
+            collection.find().toArray(function(err, items){
+                if(err){
+                    res.send(400);
+                    return;
+                }
+                
+                res.send(items);
+            });
+        });
     });
-});
-
-/**
- * Get all towers
- */
-app.get("/towers", function(req, res) {
-    console.log("A request is done on /towers on GET");
-    res.send(towers);
-});
-
-/**
- * Delete all towers
- */
-app["delete"]("/towers", function(req, res) {
-    console.log("A request is done on /towers on DELETE");
-    res.send(towers);
-});
-
-/**
- * Put a new tower
- */
-app.put("/towers", function(req, res) {
-    console.log("A request is done on /towers on PUT");
     
-    if(!req.body) {
-        res.send(400);
-        return;
-    }
+    /**
+     * Get all towers
+     */
+    app.get("/towers", function(req, res) {
+        console.log("A request is done on /towers on GET");
+        database.collection("towers", function(err, collection) {
+            if(err){
+                res.send(400);
+                return;
+            }
+            
+            collection.find({ }).toArray(function(err, items){
+                if(err){
+                    res.send(400);
+                    return;
+                }
+                
+                res.send(items);
+            });
+        });
+    });
     
-    var tower = req.body;
-    tower.id = Date.now();
-    towers.push(tower);
-    
-    res.send(tower);
-});
-
-/**
- * Update a tower
- */
-app.post("/towers/:id", function(req, res) {
-    console.log("A request is done on /towers on POST");
-    
-    if(!req.body) {
-        res.send(400);
-        return;
-    }
-    
-    var i;
-    for(i = 0; i < towers.length; ++i) {
-        if(towers[i].id === req.params.id) {
-            towers[i] = req.body;
-            break;
+    /**
+     * Put a new tower
+     */
+    app.put("/towers", function(req, res) {
+        console.log("A request is done on /towers on PUT");
+        
+        if(!req.body) {
+            res.send(400);
+            return;
         }
-    }
+        
+        database.collection("towers", function(err, collection) {
+            collection.insert(req.body, { safe:true }, function(err, result) {
+                res.send(err ? 500 : result[0]);
+            });
+        });
+    });
     
-    res.send(req.body);
+    /**
+     * Update a tower
+     */
+    app.post("/towers/:id", function(req, res) {
+        console.log("A request is done on /towers on POST");
+        
+        database.collection("towers", function(err, collection) {
+            collection.update({ "_id": new mongo.BSONPure.ObjectID(id) }, req.body, { safe:true }, function(err, result) {
+                res.send(err ? 500 : req.body);
+            });
+        });
+    });
+    
+    /**
+     * Remove a tower
+     */
+    app["delete"]("/towers/:id", function(req, res) {
+        console.log("A request is done on /towers on DELETE");
+        
+        database.collection("towers", function(err, collection) {
+            collection.remove({ "_id": new mongo.BSONPure.ObjectID(req.params.id) }, { safe:true }, function(err, result) {
+                res.send(err ? 500 : req.body);
+            });
+        });
+    });
+    
+    // And finally, run the server
+    app.listen(8080);
+    
+    console.log("Server started on port 8080");
 });
-
-/**
- * Remove a tower
- */
-app["delete"]("/towers/:id", function(req, res) {
-    console.log("A request is done on /towers on DELETE");
-    
-    var i, tower;
-    for(i = 0; i < towers.length; ++i) {
-        if(towers[i].id == req.params.id) {
-            tower = towers[i];
-            towers.splice(i, 1);
-            break;
-        }
-    }
-    
-    res.send(tower);
-});
-
-// And finally, run the server
-app.listen(8080);
-
-console.log("Server started on port 8080");

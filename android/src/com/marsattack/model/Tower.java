@@ -10,6 +10,14 @@ public class Tower {
 	private double longitude;
 	private int altitude;
 	
+	/**
+	 * Default constructor
+	 */
+	public Tower() {
+		super();
+		this.id = -1; // Not created
+	}
+	
 	public int getId() {
 		return id;
 	}

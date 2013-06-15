@@ -50,6 +50,9 @@ var
 console.log("Start to initialize our REST api");
 
 // REST api definition
+
+app.use(express.bodyParser()); // Set that we will use the Express parser (try to parse into JSON / form-url-encoded ...). See http://expressjs.com/api.html#bodyParser
+
 /**
  * Get a battle map
  */
@@ -86,6 +89,11 @@ app["delete"]("/towers", function(req, res) {
 app.put("/towers", function(req, res) {
     console.log("A request is done on /towers on PUT");
     
+    if(!req.body) {
+        res.send(400);
+        return;
+    }
+    
     var tower = req.body;
     tower.id = Date.now();
     towers.push(tower);
@@ -98,6 +106,11 @@ app.put("/towers", function(req, res) {
  */
 app.post("/towers/:id", function(req, res) {
     console.log("A request is done on /towers on POST");
+    
+    if(!req.body) {
+        res.send(400);
+        return;
+    }
     
     var i;
     for(i = 0; i < towers.length; ++i) {
@@ -118,7 +131,7 @@ app["delete"]("/towers/:id", function(req, res) {
     
     var i, tower;
     for(i = 0; i < towers.length; ++i) {
-        if(towers[i].id === req.params.id) {
+        if(towers[i].id == req.params.id) {
             tower = towers[i];
             towers.splice(i, 1);
             break;

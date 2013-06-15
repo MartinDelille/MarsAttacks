@@ -6,7 +6,7 @@
 /androidTest/android.iml
 /androidTest/local.properties
 /androidTest/out
-
+/android/bin/
 /android/.project
 /android/.classpath
 /android-test/.project

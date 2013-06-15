@@ -1,0 +1,10 @@
+{
+    "name": "devcamp-server",
+    "description": "Server for the DevCamp 2013",
+    "version": "0.0.1",
+    "private": true,
+    "dependencies": {
+        "express": "3.x",
+        "mongodb": "1.3.9"
+    }
+}

@@ -181,6 +181,28 @@ database.open(function(err){
         });
     });
 
+    /**
+     * Get all towers
+     */
+    app.get("/aliens", function(req, res) {
+        console.log("A request is done on /aliens on GET");
+        database.collection("aliens", function(err, collection) {
+            if(err){
+                res.send(400);
+                return;
+            }
+            
+            collection.find({ }).toArray(function(err, items){
+                if(err){
+                    res.send(400);
+                    return;
+                }
+                
+                res.send(items);
+            });
+        });
+    });
+
     // And finally, run the server
     app.listen(8080);
     

@@ -71,11 +71,10 @@ var map;
         icon: iconTower
       });
       marker.towerModel = self.jsonTower;
-      // console.log(marker);
       google.maps.event.addListener(marker, 'click', function() {
         console.log("ok");
         console.log(marker.towerModel);
-        Missile.display(marker.towerModel);
+        Missile.displayRectangle(marker.towerModel);
         TowerWindowInfo.display(marker);
       });
     }
@@ -193,12 +192,9 @@ var Missile = (function() {
   };
 
   var MissileView = function(){
-    this.radius = 1000;
   };
   MissileView.prototype = {
-    draw: function(center) {
-      console.log(this.radius);
-      console.log(center);
+    drawCircle: function(center) {
       var populationOptions = {
         strokeColor: "#FF0000",
         strokeOpacity: 0.8,
@@ -207,19 +203,40 @@ var Missile = (function() {
         fillOpacity: 0.35,
         map: map,
         center: center,
-        radius: this.radius };
+        radius: 100 };
       cityCircle = new google.maps.Circle(populationOptions);
+    },
+    drawRectangle: function(center) {
+      console.log(center);
+      console.log(center.jb);
+      var rectOptions = {
+        strokeColor: "#FF0000",
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+        fillColor: "#FF0000",
+        fillOpacity: 0.35,
+        map: map,
+        bounds: new google.maps.LatLngBounds
+            (
+            new google.maps.LatLng(center.jb-0.01, center.kb-0.01),
+            new google.maps.LatLng(center.jb+0.01, center.kb+0.01)
+            )
+      };
+      rectangle = new google.maps.Rectangle(rectOptions);
     }
   };
 
   return {
-    display: function(alien){
-      console.log("ah");
-      console.log(alien);
+    displayCircle: function(alien){
       missileModel = new MissileModel();
       console.log(missileModel.getCenter(alien));
       missileView = new MissileView();
-      missileView.draw(missileModel.getCenter(alien));
+      missileView.drawCircle(missileModel.getCenter(alien));
+    },
+    displayRectangle: function(tower){
+      missileModel = new MissileModel();
+      missileView = new MissileView();
+      missileView.drawRectangle(missileModel.getCenter(tower));
     }
   };
 })();

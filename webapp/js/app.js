@@ -7,7 +7,7 @@ var map;
  var TowerMap = (function() {
 
   var TowerModel = function() {
-    this.endpoint = 'http://192.168.1.103:8080/backend/towers';
+    this.endpoint = 'http://test.dubware.net/mars/backend/towers';
     this.towers = null;
   };
 
@@ -121,7 +121,7 @@ var map;
 var TowerWindowInfo = (function() {
 
   var TowerWindowInfoModel = function() {
-    this.endpoint = 'http://192.168.1.103:8080/backend/towers';
+    this.endpoint = 'http://test.dubware.net/mars/backend/towers';
   };
 
   TowerWindowInfoModel.prototype = {
@@ -239,7 +239,7 @@ var Missile = (function() {
 var AlienMap = (function() {
 
   var AliensModel = function() {
-    this.endpoint = 'http://192.168.1.103:8080/backend/aliens';
+    this.endpoint = 'http://test.dubware.net/mars/backend/aliens';
     this.aliens = null;
   };
   AliensModel.prototype = {
@@ -325,7 +325,7 @@ var SocketHandler = (function() {
     getInstance: function() {
       if (socket === null) {
         // Initialize webSocket
-        socket = io.connect("http://192.168.1.103:1337");
+        socket = io.connect("hhttp://test.dubware.net:1337");
         socket.on("connected", function (data) {
           console.log("We are connected: " + JSON.stringify(data));
           //socket.emit('my other event', { my: 'data' });

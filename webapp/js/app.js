@@ -4,7 +4,7 @@
 var TowerMap = (function() {
 
 	var TowerModel = function() {
-		this.endpoint = 'http://192.168.1.101:8080/towers';
+		this.endpoint = 'http://10.0.0.104:8080/towers';
 		this.towers = null;
 	};
 	TowerModel.prototype = {

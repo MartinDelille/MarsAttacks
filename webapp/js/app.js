@@ -2,6 +2,8 @@
  * Module to manager towers on the map.
  */
 
+var map;
+
  var TowerMap = (function() {
 
   var TowerModel = function() {
@@ -28,7 +30,7 @@
         $.ajax({
           type : "PUT",
           url : self.endpoint,
-          data : {latitude: position.coords.latitude , longitude : position.coords.longitude},
+          data : {latitude: position.coords.latitude , longitude : position.coords.longitude, life : 100},
           success : function (jsonTower) {
             $(self).trigger('created',[jsonTower]);
           }
@@ -55,18 +57,24 @@
     }
   };
 
-  var TowerPinView = function(position) {
-    this.position = position;
+  var TowerPinView = function(jsonTower) {
+    this.jsonTower = jsonTower;
   };
   TowerPinView.prototype = {
     displayMarker: function() {
+      var self = this;
       var iconTower = 'img/tower.png';
-      var googlePos = new google.maps.LatLng(this.position.latitude,this.position.longitude);
+      var googlePos = new google.maps.LatLng(self.jsonTower.latitude,self.jsonTower.longitude);
       var marker = new google.maps.Marker({
         position: googlePos,
         map: map,
         icon: iconTower
       });
+      marker.towerModel = self.jsonTower;
+      // console.log(marker);
+      // google.maps.event.addListener(marker, 'click', function() {
+      //   TowerWindowInfo.display(marker);
+      // });
     }
   };
 
@@ -110,9 +118,73 @@
 
 })();
 
+
+var TowerWindowInfo = (function() {
+
+  var TowerWindowInfoModel = function() {
+    this.endpoint = 'http://10.0.0.104:8080/towers';
+  };
+
+  TowerWindowInfoModel.prototype = {
+    getNumberOfLives: function(idMarker){
+      var self = this;
+      $.get(this.endpoint+":"+idMarker, function(result) {
+        return result.lives;
+        // $(self).trigger('livesLoaded');
+      });
+    },
+    setMessageToDisplay: function(message){
+      var self = this;
+      var contentString = '<div id="content">'+
+      '<div id="siteNotice">'+
+      '</div>'+
+      '<h1 id="firstHeading" class="firstHeading">Tower</h1>'+
+      '<div id="bodyContent">'+
+      '<p>'+
+      message +
+      ' lives </p>' +
+      '</div>'+
+      '</div>';
+      return contentString;
+    }
+  };
+
+  var TowerWindowInfoView = function(message) {
+    this.message = message;
+  };
+
+  TowerWindowInfoView.prototype = {
+    display: function(marker){
+      var infowindow = new google.maps.InfoWindow({
+        content: this.message
+      });
+      infowindow.open(map,marker);
+      google.maps.event.addListener(infowindow,'closeclick',function(){
+        alert("I am close");
+      })
+    }
+  };
+
+  return {
+    display: function(marker) {
+      console.log(marker.towerModel);
+      var windowModel = new TowerWindowInfoModel();
+      var lives = marker.towerModel.life;
+      var windowInfo = new TowerWindowInfoView(windowModel.setMessageToDisplay(lives));
+      windowInfo.display(marker);
+    }
+  };
+
+})();
+
+
+
+
+
+
+
 var GRENOBLE_LAT_LNG = new google.maps.LatLng(45.1667, 5.7167);
 
-var map;
 function initialize() {
   var mapOptions = {
     zoom: 8,

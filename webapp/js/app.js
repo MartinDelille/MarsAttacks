@@ -7,7 +7,7 @@ var map;
  var TowerMap = (function() {
 
   var TowerModel = function() {
-    this.endpoint = 'http://test.dubware.net/backend/towers';
+    this.endpoint = 'http://test.dubware.net/mars/backend/towers';
     this.towers = null;
   };
 
@@ -121,7 +121,7 @@ var map;
 var TowerWindowInfo = (function() {
 
   var TowerWindowInfoModel = function() {
-    this.endpoint = 'http://test.dubware.net/backend/towers';
+    this.endpoint = 'http://test.dubware.net/mars/backend/towers';
   };
 
   TowerWindowInfoModel.prototype = {
@@ -239,7 +239,7 @@ var Missile = (function() {
 var AlienMap = (function() {
 
   var AliensModel = function() {
-    this.endpoint = 'http://test.dubware.net/backend/aliens';
+    this.endpoint = 'http://test.dubware.net/mars/backend/aliens';
     this.aliens = null;
   };
   AliensModel.prototype = {

@@ -10,7 +10,11 @@ html, body {
 
 #app { 
 	display: -webkit-box;
+	display: -moz-box;
+	display: box;
 	-webkit-box-orient: vertical;
+	-moz-box-orient: vertical;
+	box-orient: vertical;
 
 	margin: auto; 
 	position: relative; 
@@ -19,14 +23,20 @@ html, body {
 
 #map-canvas { 
 	-webkit-box-flex: 2; 
+	-moz-box-flex: 2; 
+	box-flex: 2; 
 }
 
 #app-wrapper, #app {
-	height: 100%;	
+	height: 100%;
+	width: 100%;
 }
 
 #app header, #map-canvas { 
 	display: -webkit-flex;
+	display: -moz-flex;
+	display: flex;
+	text-align:	center;
 }
 
 #map-canvas img { /* Hack CSS because Bootstrap affect the display of Google Map */
@@ -40,7 +50,7 @@ html, body {
 /* Heading */
 
 #app #logo { 
-	width: 354px;
+	width: 100%;
 	height: 100px;
 	margin: 0 auto;
 }
@@ -49,9 +59,25 @@ html, body {
 
 /* Controls */
 
-#controls { position: absolute; width: 100%; bottom: 0; height: 60px; }
+#controls { position: absolute; width: 100%; bottom: 0; height: 60px; overflow: hidden; }
 
 /* button transitions */
-#controls #build-tower { -webkit-transition-property: height; -webkit-transition-duration: 0.2s; -webkit-transition-timing-function: ease-out; position: absolute; bottom: 0px; left: 50%; margin-left: -65px; }
+#controls #build-tower { 
+	-webkit-transition-property: height; 
+	-moz-transition-property: height; 
+	transition-property: height; 
+	-webkit-transition-duration: 0.2s; 
+	-moz-transition-duration: 0.2s; 
+	transition-duration: 0.2s; 
+	-webkit-transition-timing-function: ease-out; 
+	-moz-transition-timing-function: ease-out;
+	transition-timing-function: ease-out;
+	
+	position: absolute; 
+	bottom: 0px; 
+	left: 50%; 
+	margin-left: -65px;
+}
+
 #controls #build-tower { border-radius: 0; border-top-left-radius: 30px; border-top-right-radius: 30px; display: inline-block; height: 0; }
 #controls #build-tower:hover { height: 50px; }

@@ -39,7 +39,9 @@ var
     /**
      * Instance for ou database
      */
-    database = new mongo.Db("marsAttack", mongoServer, { w: 1 });
+    database = new mongo.Db("marsAttack", mongoServer, { w: 1 }),
+
+    aliensMaker = require('./aliens.js');
     
 console.log("Open the database");
 database.open(function(err){
@@ -140,7 +142,24 @@ database.open(function(err){
             });
         });
     });
-    
+
+    // aliens ---------------------------------------------------
+
+    /**
+     * Create a random cloud of aliens in one of the 4th cardinal points.
+     */
+    app.post("/aliens", function(req, res) {
+        database.collection("aliens", function(err, collection) {
+            var aliens = aliensMaker.create({ lat: 45.1667, lng: 5.7167 });
+/*            for (var i=0; i<aliens.length; i++) {
+                collection.insert(aliens[i], { safe:true }, function(err, result) {
+                    res.send(err ? 500 : result[0]);
+                });                
+            }*/
+            res.send(aliens);
+        });
+    });
+
     // And finally, run the server
     app.listen(8080);
     

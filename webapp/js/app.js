@@ -72,9 +72,6 @@ var map;
       });
       marker.towerModel = self.jsonTower;
       google.maps.event.addListener(marker, 'click', function() {
-        console.log("ok");
-        console.log(marker.towerModel);
-        Missile.displayRectangle(marker.towerModel);
         TowerWindowInfo.display(marker);
       });
     }
@@ -161,9 +158,6 @@ var TowerWindowInfo = (function() {
         content: this.message
       });
       infowindow.open(map,marker);
-      google.maps.event.addListener(infowindow,'closeclick',function(){
-        console.log("closing");
-      });
     }
   };
 
@@ -186,7 +180,6 @@ var Missile = (function() {
   };
   MissileModel.prototype = {
     getCenter:function(alien){
-      console.log(alien);
       return new google.maps.LatLng(alien.latitude,alien.longitude);
     }
   };
@@ -229,7 +222,6 @@ var Missile = (function() {
   return {
     displayCircle: function(alien){
       missileModel = new MissileModel();
-      console.log(missileModel.getCenter(alien));
       missileView = new MissileView();
       missileView.drawCircle(missileModel.getCenter(alien));
     },

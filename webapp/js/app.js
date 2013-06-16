@@ -74,6 +74,8 @@ var map;
       // console.log(marker);
       google.maps.event.addListener(marker, 'click', function() {
         TowerWindowInfo.display(marker);
+        var missile = new Missile();
+        missile.display(marker.towerModel);
       });
     }
   };
@@ -177,6 +179,47 @@ var TowerWindowInfo = (function() {
 
 })();
 
+var Missile = (function() {
+
+  var MissileModel = function(){
+    this.center = null;
+    this.rayon = null;
+  };
+  MissileModel.prototype = {
+    getCenter:function(alien){
+      this.center = new google.maps.LatLng(alien.latitude,alien.longitude);
+    }
+  };
+
+  var MissileView = function(){
+
+    MissileView.prototype = {
+      draw: function(center,radius) {
+        var populationOptions = {
+          strokeColor: "#FF0000",
+          strokeOpacity: 0.8,
+          strokeWeight: 2,
+          fillColor: "#FF0000",
+          fillOpacity: 0.35,
+          map: map,
+          center: center,
+          radius: radius
+        };
+      cityCircle = new google.maps.Circle(populationOptions);
+      }
+    };
+  };
+
+  return {
+    display: function(alien){
+      missileModel = new MissileModel();
+      MissileModel.getCenter(alien);
+      missileView = new MissileView();
+      missileView.draw(center,radius);
+    }
+  };
+})();
+
 /**
  * Manages aliens on the map.
  */
@@ -209,7 +252,7 @@ var AlienMap = (function() {
           map: map,
           icon: 'img/ufo.png'
         });
-      }  
+      }
     }
   };
 
@@ -222,6 +265,9 @@ var AlienMap = (function() {
   };
 
 })();
+
+
+
 
 
 

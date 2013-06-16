@@ -49,17 +49,18 @@ html, body {
 
 /* Heading */
 
-#app #logo { 
+#app-wrapper #app #logo { 
 	width: 100%;
 	height: 100px;
 	margin: 0 auto;
+	text-align: center;
 }
 
 #app header h1 { font-size: 18px; text-transform: uppercase; }
 
 /* Controls */
 
-#controls { position: absolute; width: 100%; bottom: 0; height: 60px; overflow: hidden; }
+#controls { position: absolute; width: 100%; bottom: 0; height: 70px; overflow: hidden; }
 
 /* button transitions */
 #controls #build-tower { 
@@ -79,5 +80,5 @@ html, body {
 	margin-left: -65px;
 }
 
-#controls #build-tower { border-radius: 0; border-top-left-radius: 30px; border-top-right-radius: 30px; display: inline-block; height: 0; }
-#controls #build-tower:hover { height: 50px; }
+#controls #build-tower { border-radius: 0; border-top-left-radius: 30px; border-top-right-radius: 30px; display: inline-block; height: 40px; }
+#controls #build-tower:hover { height: 60px; }

@@ -8,6 +8,14 @@ html, body {
 #app { margin: auto; width: 500px; position: relative; }
 #map-canvas { width: 500px; height: 500px; }
 
+#map-canvas img { /* Hack CSS because Bootstrap affect the display of Google Map */
+  max-width: none;
+}
+
+#map-canvas label { /* Hack CSS because Bootstrap affect the display of Google Map */
+  width: auto; display:inline; 
+}
+
 /* Heading */
 
 #app header { background-color: #3C3C3C; color: #FFFFFF; padding: 4px 8px; text-align: center; }

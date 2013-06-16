@@ -7,7 +7,7 @@ var map;
  var TowerMap = (function() {
 
   var TowerModel = function() {
-    this.endpoint = 'http://localhost:8080/towers';
+    this.endpoint = 'http://localhost:8080/backend/towers';
     this.towers = null;
   };
 
@@ -124,7 +124,7 @@ var map;
 var TowerWindowInfo = (function() {
 
   var TowerWindowInfoModel = function() {
-    this.endpoint = 'http://10.0.0.104:8080/towers';
+    this.endpoint = 'http://10.0.0.104:8080/backend/towers';
   };
 
   TowerWindowInfoModel.prototype = {
@@ -226,7 +226,7 @@ var Missile = (function() {
 var AlienMap = (function() {
 
   var AliensModel = function() {
-    this.endpoint = 'http://localhost:8080/aliens';
+    this.endpoint = 'http://localhost:8080/backend/aliens';
     this.aliens = null;
   };
   AliensModel.prototype = {

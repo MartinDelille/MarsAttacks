@@ -41,7 +41,7 @@ var
      */
     database = new mongo.Db("marsAttack", mongoServer, { w: 1 }),
 
-    aliensMaker = require('./aliens.js');
+    AliensFactory = require('./aliens.js');
     
 console.log("Open the database");
 database.open(function(err){
@@ -169,7 +169,7 @@ database.open(function(err){
      */
     app.post("/aliens", function(req, res) {
         database.collection("aliens", function(err, collection) {
-            var aliens = aliensMaker.create({ lat: 45.1667, lng: 5.7167 });
+            var aliens = AliensFactory.createCloud({ lat: 45.1667, lng: 5.7167 });
             var results = [];
             for (var i=0; i<aliens.length; i++) {
                 collection.insert(aliens, { safe:true }, function(err, result) {

@@ -30,11 +30,13 @@ var TowerMap = (function() {
 			this.towerPins = [];
 		},
 		draw: function() {
+			var iconTower = 'img/tower.png';
 			for (var i=0; i<this.model.towers.length; i++) {
 				var tower = this.model.towers[i];
 				var marker = new google.maps.Marker({
 					position:  new google.maps.LatLng(tower.latitude, tower.longitude),
-					map: map
+					map: map,
+					icon: iconTower
 				});
 				this.towerPins.push(marker);				
 			}

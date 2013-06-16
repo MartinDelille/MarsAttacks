@@ -74,23 +74,31 @@ var map;
       google.maps.event.addListener(marker, 'click', function() {
         TowerWindowInfo.display(marker);
       });
+      
+      return marker;
     }
   };
 
   var TowerView = function(model) {
     this.model = model;
+    SocketHandler.getInstance().on('tower:add', $.proxy(this.onTowerAdd, this));
+    SocketHandler.getInstance().on('tower:delete', $.proxy(this.onTowerDelete, this));
+    SocketHandler.getInstance().on('towers:delete', $.proxy(this.onTowersDelete, this));
   };
   TowerView.prototype = {
     loadTowers: function() {
       $(this.model).on('loaded', $.proxy(this.draw, this));
       this.model.load();
       this.towerPins = [];
+      this.towerPinsIndexes = {};
     },
     draw: function() {
       for (var i=0; i<this.model.towers.length; i++) {
-        var tower = this.model.towers[i];
+        var tower = this.model.towers[i], marker, modelPinView;
         modelPinView = new TowerPinView(tower);
-        modelPinView.displayMarker();
+        marker = modelPinView.displayMarker();
+        this.towerPins.push(marker);
+        this.towerPinsIndexes[this.model.towers[i]._id] = marker;
       }
     },
     bind: function() {
@@ -104,6 +112,21 @@ var map;
         newViewTower.displayMarker();
       });
       newTower.create();
+    },
+    onTowerAdd: function(json){
+        
+    },
+    onTowerDelete: function(json){
+        
+    },
+    onTowersDelete: function(){
+        for (var i = this.towerPins.length - 1, towerMarker; i >= 0; --i) {
+            towerMarker.setMap(null);
+        }
+        
+        this.towerPins.length = 0;
+        this.model.towers.length = 0;
+        this.towerPinsIndexes = {};
     }
   };
 
@@ -289,9 +312,11 @@ var AlienMap = (function() {
         this.model.aliens = this.model.aliens.concat(aliensArray);
         this.addAliens(this.model.aliens);
     },
-    onAliensDeleted: function() {
-        for(var i = this.model.aliens.length - 1, alienMarker; i >=0; --i){
-            alienMarker = this.model.aliens[i];
+    onAliensDeleted: function(aliensArray) {
+        var arrayToUse = aliensArray ? aliensArray : this.model.aliens;
+        
+        for(var i = arrayToUse.length - 1, alienMarker; i >=0; --i){
+            alienMarker = arrayToUse[i];
             
             if(alienMarker.moveInAction){
                 window.clearTimeout(alienMarker.moveInAction);
@@ -301,7 +326,7 @@ var AlienMap = (function() {
             alienMarker.setMap(null); // remove it of Google Maps
         }
         
-        this.model.aliens.length = 0; // Flush the database
+        arrayToUse.length = 0; // Flush the array
     },
     moveSmoothly: function(alienMarker, latitude, longitude) {
         if(alienMarker.moveInAction){

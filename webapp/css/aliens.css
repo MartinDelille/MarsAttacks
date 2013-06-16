@@ -13,3 +13,17 @@
 	top: 5px;
 	width: 50px;
 }
+
+#counter-alien-win {
+	background-color: white;
+	border: 2px solid black;
+	font-style: italic;
+	font-weight: bold;
+	height: 2em;
+	line-height: 2em;
+	position: absolute;
+	right: 55px;
+	text-align: center;
+	top: 5px;
+	width: 50px;
+}

@@ -3,6 +3,7 @@ html, body {
 	padding: 0;
 	border: 0px solid transparent;
 	height: 100%;
+	background-color: black;
 }
 
 /* Layout */
@@ -13,6 +14,7 @@ html, body {
 
 	margin: auto; 
 	position: relative; 
+
 }
 
 #map-canvas { 
@@ -37,12 +39,10 @@ html, body {
 
 /* Heading */
 
-#app header { 
-	background-color: #3C3C3C; 
-	color: #FFFFFF; 
-	padding: 4px 8px; 
-	text-align: center;
-	height: 68px;
+#app #logo { 
+	width: 354px;
+	height: 100px;
+	margin: 0 auto;
 }
 
 #app header h1 { font-size: 18px; text-transform: uppercase; }

@@ -19,6 +19,12 @@ var
     express = require("express"),
     
     /**
+     * Instance of the WebSocket server
+     * @type {SocketIo}
+     */
+    socketIO = require("socket.io"),
+    
+    /**
      * Mongo instance to communicate with the MongoDB instance
      * @type {MongoDB}
      */
@@ -51,6 +57,26 @@ database.open(function(err){
     }
     
     console.log("Database opened");
+    console.log("Start to intialize our WebSocket server");
+    
+    // WebSocket Definition
+    socketIO = socketIO.listen(1337);
+    
+    socketIO.sockets.on('connection', function (socket) {
+        socket.emit("connected", { timestamp: Date.now(),  });
+        
+        /*client.on("message", function () {
+        }) ;
+        
+        client.on("disconnect", function () {
+        });*/
+    });
+    
+    function broadCastToClients(messageName, jsonObjectOrArray) {
+        socketIO.sockets.emit(messageName, jsonObjectOrArray);
+    }
+    
+    console.log("WebSocket server is ready");
     console.log("Start to initialize our REST api");
 
     // REST api definition

@@ -307,6 +307,13 @@ function initialize() {
   // load  maps
   TowerMap.init();
   AlienMap.init();
+  
+  // Initialize webSocket
+  var socket = io.connect("http://localhost:1337");
+  socket.on("connected", function (data) {
+    console.log("We are connected: " + JSON.stringify(data));
+    //socket.emit('my other event', { my: 'data' });
+  });
 }
 google.maps.event.addDomListener(window, 'load', initialize);
 

@@ -347,6 +347,7 @@ function initialize() {
   };
   map = new google.maps.Map(document.getElementById('map-canvas'),
     mapOptions);
+  map.setZoom(13);
 
   // load  maps
   TowerMap.init();

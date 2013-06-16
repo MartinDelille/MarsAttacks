@@ -72,9 +72,9 @@ var map;
       });
       marker.towerModel = self.jsonTower;
       // console.log(marker);
-      // google.maps.event.addListener(marker, 'click', function() {
-      //   TowerWindowInfo.display(marker);
-      // });
+      google.maps.event.addListener(marker, 'click', function() {
+        TowerWindowInfo.display(marker);
+      });
     }
   };
 
@@ -161,7 +161,7 @@ var TowerWindowInfo = (function() {
       infowindow.open(map,marker);
       google.maps.event.addListener(infowindow,'closeclick',function(){
         alert("I am close");
-      })
+      });
     }
   };
 

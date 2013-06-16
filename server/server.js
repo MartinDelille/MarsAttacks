@@ -47,7 +47,7 @@ var
      */
     database = new mongo.Db("marsAttack", mongoServer, { w: 1 }),
 
-    AliensFactory = require('./aliens.js');
+    Aliens = require('./aliens.js');
     
 console.log("Open the database");
 database.open(function(err){
@@ -191,12 +191,14 @@ database.open(function(err){
 
     // aliens ---------------------------------------------------
 
+    var TOWN_CENTER = { lat: 45.1667, lng: 5.7167 };
+
     /**
      * Create a random cloud of aliens in one of the 4th cardinal points.
      */
     app.post("/backend/aliens", function(req, res) {
         database.collection("aliens", function(err, collection) {
-            var aliens = AliensFactory.createCloud({ lat: 45.1667, lng: 5.7167 });
+            var aliens = Aliens.AlienFactory.createCloud(TOWN_CENTER);
             var results = [];
             for (var i=0; i<aliens.length; i++) {
                 collection.insert(aliens, { safe:true }, function(err, result) {
@@ -209,7 +211,7 @@ database.open(function(err){
     });
 
     /**
-     * Get all towers
+     * Get all aliens
      */
     app.get("/backend/aliens", function(req, res) {
         console.log("A request is done on /aliens on GET");
@@ -227,6 +229,29 @@ database.open(function(err){
                 
                 res.send(items);
             });
+        });
+    });
+
+    app.get("/aliens/moves/forward", function(req, res) {
+        console.log("A request is done on /aliens/moves/forward on GET");
+        database.collection("aliens", function(err, collection) {
+            if(err) {
+                res.send(400);
+                return;
+            }
+            
+            var result = [];
+            var cursor = collection.find({ });
+            cursor.each(function(s, doc) {
+                if (doc != null && doc.lat != null && doc.lng != null) {
+                    new Aliens.AlienMoves(doc).forwardTo(TOWN_CENTER);
+                    result.push(doc);
+                    collection.update({_id: doc._id}, { lat: doc.lat, lng: doc.lng }, function() {
+
+                    });
+                }
+            });
+            res.send(result);
         });
     });
 

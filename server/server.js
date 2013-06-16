@@ -247,11 +247,11 @@ database.open(function(err){
                     new Aliens.AlienMoves(doc).forwardTo(TOWN_CENTER);
                     result.push(doc);
                     collection.update({_id: doc._id}, { lat: doc.lat, lng: doc.lng }, function() {
-
+                        broadCastToClients('aliens:move', [doc]);
                     });
                 }
             });
-            res.send(result);
+            res.send();
         });
     });
 

@@ -7,7 +7,7 @@ var map;
  var TowerMap = (function() {
 
   var TowerModel = function() {
-    this.endpoint = 'http://localhost:8080/backend/towers';
+    this.endpoint = 'http://test.dubware.net/backend/towers';
     this.towers = null;
   };
 
@@ -121,7 +121,7 @@ var map;
 var TowerWindowInfo = (function() {
 
   var TowerWindowInfoModel = function() {
-    this.endpoint = 'http://10.0.0.104:8080/backend/towers';
+    this.endpoint = 'http://test.dubware.net/backend/towers';
   };
 
   TowerWindowInfoModel.prototype = {
@@ -239,7 +239,7 @@ var Missile = (function() {
 var AlienMap = (function() {
 
   var AliensModel = function() {
-    this.endpoint = 'http://localhost:8080/backend/aliens';
+    this.endpoint = 'http://test.dubware.net/backend/aliens';
     this.aliens = null;
   };
   AliensModel.prototype = {
@@ -254,7 +254,9 @@ var AlienMap = (function() {
 
   var AliensView = function(model) {
     this.model = model;
+    this.markersByAlienId = {};
     $(this.model).on('loaded', $.proxy(this.onLoaded, this));
+    SocketHandler.getInstance().on('aliens:move', $.proxy(this.onAliensMoved, this));
   };
   AliensView.prototype = {
     onLoaded: function() {
@@ -265,6 +267,16 @@ var AlienMap = (function() {
           map: map,
           icon: 'img/ufo.png'
         });
+        this.markersByAlienId[alien._id] = marker;
+      }
+    },
+    onAliensMoved: function(aliensArray) {
+      for (var i=0; i<aliensArray.length; i++) {
+        var alien = aliensArray[i];
+        if (alien._id in this.markersByAlienId) {
+          var marker = this.markersByAlienId[alien._id];
+          marker.setPosition(new google.maps.LatLng(alien.lat, alien.lng));
+        }
       }
     }
   };
@@ -280,10 +292,24 @@ var AlienMap = (function() {
 })();
 
 
+var SocketHandler = (function() {
+  var socket = null;
 
+  return {
+    getInstance: function() {
+      if (socket === null) {
+        // Initialize webSocket
+        socket = io.connect("http://test.dubware.net:1337");
+        socket.on("connected", function (data) {
+          console.log("We are connected: " + JSON.stringify(data));
+          //socket.emit('my other event', { my: 'data' });
+        });
+      }
+      return socket;
+    }
+  };
 
-
-
+})();
 
 var GRENOBLE_LAT_LNG = new google.maps.LatLng(45.1667, 5.7167);
 
@@ -299,13 +325,6 @@ function initialize() {
   // load  maps
   TowerMap.init();
   AlienMap.init();
-  
-  // Initialize webSocket
-  var socket = io.connect("http://localhost:1337");
-  socket.on("connected", function (data) {
-    console.log("We are connected: " + JSON.stringify(data));
-    //socket.emit('my other event', { my: 'data' });
-  });
 }
 google.maps.event.addDomListener(window, 'load', initialize);
 

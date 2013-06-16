@@ -275,9 +275,35 @@ var AlienMap = (function() {
         var alien = aliensArray[i];
         if (alien._id in this.markersByAlienId) {
           var marker = this.markersByAlienId[alien._id];
-          marker.setPosition(new google.maps.LatLng(alien.lat, alien.lng));
+//          marker.setPosition(new google.maps.LatLng(alien.lat, alien.lng));
+            this.moveSmoothly(marker, alien.lat, alien.lng);
         }
       }
+    },
+    moveSmoothly: function(alienMarker, latitude, longitude) {
+        if(alienMarker.moveInAction){
+            window.clearTimeout(alienMarker.moveInAction);
+            alienMarker.moveInAction = null;
+        }
+        
+        var lastPosition = alienMarker.getPosition(),
+            i = 0,
+            deltaLat = (latitude - lastPosition.lat()) / 100,
+            deltaLng = (longitude - lastPosition.lng()) / 100;
+            
+        function moveMarker() {
+            alienMarker.setPosition(new google.maps.LatLng(alienMarker.getPosition().lat() + deltaLat, alienMarker.getPosition().lng() + deltaLng));
+            
+            if(i !== 100){
+                i++;
+                alienMarker.moveInAction = setTimeout(moveMarker, 10);
+                
+            } else {
+                alienMarker.moveInAction = null;
+            }
+        }
+        
+        alienMarker.moveInAction = setTimeout(moveMarker, 10);
     }
   };
 
@@ -299,7 +325,7 @@ var SocketHandler = (function() {
     getInstance: function() {
       if (socket === null) {
         // Initialize webSocket
-        socket = io.connect("http://test.dubware.net:1337");
+        socket = io.connect("hhttp://test.dubware.net:1337");
         socket.on("connected", function (data) {
           console.log("We are connected: " + JSON.stringify(data));
           //socket.emit('my other event', { my: 'data' });

@@ -3,50 +3,97 @@
  */
 var TowerMap = (function() {
 
-	var TowerModel = function() {
-		this.endpoint = 'http://10.0.0.104:8080/towers';
-		this.towers = null;
-	};
-	TowerModel.prototype = {
-		/**
-		 * Loads tower data.
-		 */
-		load: function() {
-			var self = this;
-			$.get(this.endpoint, function(towerArray) {
-				self.towers = towerArray;
-				$(self).trigger('loaded');
-			});
-		}
-	};
+  var TowerModel = function() {
+    this.endpoint = 'http://10.0.0.104:8080/towers';
+    this.towers = null;
+  };
 
-	var TowerView = function(model) {
-		this.model = model;
-	};
-	TowerView.prototype = {
-		loadTowers: function() {
-			$(this.model).on('loaded', $.proxy(this.draw, this));
-			this.model.load();
-			this.towerPins = [];
-		},
-		draw: function() {
-			for (var i=0; i<this.model.towers.length; i++) {
-				var tower = this.model.towers[i];
-				var marker = new google.maps.Marker({
-					position:  new google.maps.LatLng(tower.latitude, tower.longitude),
-					map: map
-				});
-				this.towerPins.push(marker);				
-			}
-		}
-	};
+  TowerModel.prototype = {
+    /**
+     * Loads tower data.
+     */
+    load: function() {
+      var self = this;
+      $.get(this.endpoint, function(towerArray) {
+        self.towers = towerArray;
+        $(self).trigger('loaded');
+      });
+    },
+    create: function() {
+      var towerPinModel = new TowerPinModel();
+      position = towerPinModel.getLocation();
+      // complete here
+      $.ajax({
+        type : "POST",
+        url : this.endpoint,
+        data : {latitude: position.coords.latitude , longitude : position.coords.longitude},
+        success : function (jsonTower) {
+          $(self).trigger('created',[jsonTower]);
+        }
+      });
+      var towerPinView = new TowerPinView(towerPinModel)
+      towerPinView.displayMarker()
+    }
+  };
 
-	return {
-		init: function() {
-			var towerView = new TowerView(new TowerModel());
-			towerView.loadTowers();
-		}
-	};
+  var TowerPinModel = function() {
+    this.endpoint = 'http://10.0.0.104:8080/towers';
+    this.position = null;
+  };
+  TowerPinModel.prototype = {
+    getLocation: function() {
+      var x=document.getElementById("build-button");
+      if (navigator.geolocation) {
+        return navigator.geolocation.getCurrentPosition();
+      } else {
+        x.innerHTML="Geolocation is not supported by this browser.";
+      }
+    }
+  };
+
+  var TowerPinView = function(model) {
+    this.model = model;
+  };
+  TowerPinView.prototype = {
+    displayMarker: function() {
+      var position = this.model.position;
+      var googlePos = new google.maps.LatLng();
+      var marker = new google.maps.Marker({
+        position: googlePos,
+        map: map,
+    }
+  }
+
+  var TowerView = function(model) {
+    this.model = model;
+  };
+  TowerView.prototype = {
+    loadTowers: function() {
+      $(this.model).on('loaded', $.proxy(this.draw, this));
+      this.model.load();
+      this.towerPins = [];
+    },
+    draw: function() {
+      for (var i=0; i<this.model.towers.length; i++) {
+        var tower = this.model.towers[i];
+        var marker = new google.maps.Marker({
+          position:  new google.maps.LatLng(tower.latitude, tower.longitude),
+          map: map
+        });
+        this.towerPins.push(marker);        
+      }
+    },
+    bind: function() {
+      
+    }
+  };
+
+  return {
+    init: function() {
+      var towerView = new TowerView(new TowerModel());
+      towerView.loadTowers();
+    }
+  };
 
 })();
 
@@ -67,30 +114,4 @@ function initialize() {
 }
 google.maps.event.addDomListener(window, 'load', initialize);
 
-// add a pin on current location
-function addPin(position)
-{
-  var googlePos = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
-  var mapOptions = {
-    zoom: 4,
-    center: googlePos,
-    mapTypeId: google.maps.MapTypeId.ROADMAP
-  }
-  var marker = new google.maps.Marker({
-      position: googlePos,
-      map: map,
-      title: 'Hello World!'
-  });
-}
-
-
-// fonction to get latitude et longitude
-var x=document.getElementById("build-button");
-function getLocation()
-  {
-  if (navigator.geolocation)
-    {
-    navigator.geolocation.getCurrentPosition(addPin);
-    }
-  else{x.innerHTML="Geolocation is not supported by this browser.";}
-  }
+  

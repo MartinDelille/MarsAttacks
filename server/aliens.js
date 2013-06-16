@@ -10,7 +10,6 @@ module.exports = (function() {
 			var oneMeterOffset = 1 / 110000;
 			var aliens = [refAlien];
 			for (var i=1; i<NUMBER_OF_ALIENS_IN_CLOUD; i++) {
-				console.log(Math.random());
 				var offsetLat = refAlien.lat - Math.random() * 10 * oneMeterOffset;
 				var offsetLng = refAlien.lng - Math.random() * 10 * oneMeterOffset;
 				aliens.push({ lat: offsetLat, lng: offsetLng, life: 10 });

@@ -272,6 +272,7 @@ database.open(function(err){
         database.collection("towers", function(err, collection) {
             collection.drop(function() {});
         });
+
         broadCastToClients('aliens:delete');
         res.send("Done");
     });

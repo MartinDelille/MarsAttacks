@@ -25,6 +25,12 @@ var
     socketIO = require("socket.io"),
     
     /**
+     * Request instance
+     * @link {Request}
+     */
+    request = require("request"),
+    
+    /**
      * Mongo instance to communicate with the MongoDB instance
      * @type {MongoDB}
      */
@@ -197,6 +203,7 @@ database.open(function(err){
      * Create a random cloud of aliens in one of the 4th cardinal points.
      */
     app.post("/backend/aliens", function(req, res) {
+        console.log("A request is done on /aliens on POST");
         database.collection("aliens", function(err, collection) {
             var aliens = Aliens.AlienFactory.createCloud(TOWN_CENTER);
             var results = [];
@@ -261,7 +268,10 @@ database.open(function(err){
     app.get("/backend/cleanup", function(req, res) {
         database.collection("aliens", function(err, collection) {
             collection.drop(function() {});
-        }); 
+        });
+        database.collection("towers", function(err, collection) {
+            collection.drop(function() {});
+        });
         broadCastToClients('aliens:delete');
         res.send("Done");
     });
@@ -270,4 +280,17 @@ database.open(function(err){
     app.listen(8080);
     
     console.log("Server started on port 8080");
+    
+    // Start a CRON
+    console.log("Now, we will start a cron timer !");
+    setInterval(function() {
+        console.log("Cron in action");
+        /*request.post("http://localhost:8080/backend/aliens", { }, function(){
+            console.log("Cron done");
+        });*/
+       
+       request.get("http://localhost:8080/backend/aliens/moves/forward", { }, function(){
+            console.log("Cron: aliens on the road !");
+        });
+    }, 5000);
 });

@@ -232,7 +232,7 @@ database.open(function(err){
         });
     });
 
-    app.get("/aliens/moves/forward", function(req, res) {
+    app.get("/backend/aliens/moves/forward", function(req, res) {
         console.log("A request is done on /aliens/moves/forward on GET");
         database.collection("aliens", function(err, collection) {
             if(err) {
@@ -253,6 +253,15 @@ database.open(function(err){
             });
             res.send();
         });
+    });
+
+    // cleanup ----------------------
+
+    app.get("/backend/cleanup", function(req, res) {
+        database.collection("aliens", function(err, collection) {
+            collection.drop(function() {});
+        }); 
+        res.send("Done");
     });
 
     // And finally, run the server

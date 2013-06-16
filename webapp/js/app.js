@@ -7,7 +7,7 @@ var map;
  var TowerMap = (function() {
 
   var TowerModel = function() {
-    this.endpoint = 'http://10.0.0.104:8080/towers';
+    this.endpoint = 'http://localhost:8080/towers';
     this.towers = null;
   };
 
@@ -15,7 +15,7 @@ var map;
     /**
      * Loads tower data.
      */
-     load: function() {
+    load: function() {
       var self = this;
       $.get(this.endpoint, function(towerArray) {
         self.towers = towerArray;
@@ -177,8 +177,51 @@ var TowerWindowInfo = (function() {
 
 })();
 
+/**
+ * Manages aliens on the map.
+ */
+var AlienMap = (function() {
 
+  var AliensModel = function() {
+    this.endpoint = 'http://localhost:8080/aliens';
+    this.aliens = null;
+  };
+  AliensModel.prototype = {
+    load: function() {
+      $.get(this.endpoint, $.proxy(this.onLoaded, this));
+    },
+    onLoaded: function(aliensArray) {
+      this.aliens = aliensArray;
+      $(this).trigger('loaded');
+    }
+  };
 
+  var AliensView = function(model) {
+    this.model = model;
+    $(this.model).on('loaded', $.proxy(this.onLoaded, this));
+  };
+  AliensView.prototype = {
+    onLoaded: function() {
+      for (var i=0; i<this.model.aliens.length; i++) {
+        var alien = this.model.aliens[i];
+        var marker = new google.maps.Marker({
+          position: new google.maps.LatLng(alien.lat, alien.lng),
+          map: map,
+          icon: 'img/ufo.png'
+        });
+      }  
+    }
+  };
+
+  return {
+    init: function() {
+      var aliensModel = new AliensModel();
+      var aliensView = new AliensView(aliensModel);
+      aliensModel.load();
+    }
+  };
+
+})();
 
 
 
@@ -194,8 +237,9 @@ function initialize() {
   map = new google.maps.Map(document.getElementById('map-canvas'),
     mapOptions);
 
-  // load towers on map
+  // load  maps
   TowerMap.init();
+  AlienMap.init();
 }
 google.maps.event.addDomListener(window, 'load', initialize);
 

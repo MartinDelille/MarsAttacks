@@ -39,7 +39,9 @@ var
     /**
      * Instance for ou database
      */
-    database = new mongo.Db("marsAttack", mongoServer, { w: 1 });
+    database = new mongo.Db("marsAttack", mongoServer, { w: 1 }),
+
+    AliensFactory = require('./aliens.js');
     
 console.log("Open the database");
 database.open(function(err){
@@ -159,7 +161,48 @@ database.open(function(err){
             });
         });
     });
-    
+
+    // aliens ---------------------------------------------------
+
+    /**
+     * Create a random cloud of aliens in one of the 4th cardinal points.
+     */
+    app.post("/aliens", function(req, res) {
+        database.collection("aliens", function(err, collection) {
+            var aliens = AliensFactory.createCloud({ lat: 45.1667, lng: 5.7167 });
+            var results = [];
+            for (var i=0; i<aliens.length; i++) {
+                collection.insert(aliens, { safe:true }, function(err, result) {
+                    if (err !== 500) {
+                        res.send(result);
+                    }
+                });                
+            }
+        });
+    });
+
+    /**
+     * Get all towers
+     */
+    app.get("/aliens", function(req, res) {
+        console.log("A request is done on /aliens on GET");
+        database.collection("aliens", function(err, collection) {
+            if(err){
+                res.send(400);
+                return;
+            }
+            
+            collection.find({ }).toArray(function(err, items){
+                if(err){
+                    res.send(400);
+                    return;
+                }
+                
+                res.send(items);
+            });
+        });
+    });
+
     // And finally, run the server
     app.listen(8080);
     

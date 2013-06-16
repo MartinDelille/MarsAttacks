@@ -21,7 +21,7 @@ import com.marsattacksgrenoble.utils.HttpUtils;
  */
 public class DefaultTowerServiceImplementation implements TowerService {
 	// Constants
-	private static final String SERVER_URL = "http://10.0.2.2:8080/towers";
+	private static final String SERVER_URL = "http://10.0.0.104:8080/towers";
 
 	/**
 	 * Convert {@link JSONObject} to {@link Tower}

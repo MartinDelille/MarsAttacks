@@ -1,7 +1,7 @@
 /**
  * Module to manager towers on the map.
  */
-var TowerMap = (function() {
+ var TowerMap = (function() {
 
   var TowerModel = function() {
     this.endpoint = 'http://10.0.0.104:8080/towers';
@@ -12,7 +12,7 @@ var TowerMap = (function() {
     /**
      * Loads tower data.
      */
-    load: function() {
+     load: function() {
       var self = this;
       $.get(this.endpoint, function(towerArray) {
         self.towers = towerArray;
@@ -20,49 +20,52 @@ var TowerMap = (function() {
       });
     },
     create: function() {
+      var self = this;
       var towerPinModel = new TowerPinModel();
-      position = towerPinModel.getLocation();
-      // complete here
-      $.ajax({
-        type : "POST",
-        url : this.endpoint,
-        data : {latitude: position.coords.latitude , longitude : position.coords.longitude},
-        success : function (jsonTower) {
-          $(self).trigger('created',[jsonTower]);
-        }
+      towerPinModel.getLocation(function(position){
+        // complete here
+        $.ajax({
+          type : "PUT",
+          url : self.endpoint,
+          data : {latitude: position.coords.latitude , longitude : position.coords.longitude},
+          success : function (jsonTower) {
+            $(self).trigger('created',[jsonTower]);
+          }
+        });
+        var towerPinView = new TowerPinView(towerPinModel);
+        towerPinView.displayMarker();
       });
-      var towerPinView = new TowerPinView(towerPinModel)
-      towerPinView.displayMarker()
     }
   };
 
   var TowerPinModel = function() {
-    this.endpoint = 'http://10.0.0.104:8080/towers';
     this.position = null;
   };
   TowerPinModel.prototype = {
-    getLocation: function() {
-      var x=document.getElementById("build-button");
+    getLocation: function(cb) {
+      var x=document.getElementById("build-tower");
       if (navigator.geolocation) {
-        return navigator.geolocation.getCurrentPosition();
+        navigator.geolocation.getCurrentPosition(function(pos){
+          cb(pos);
+        });
       } else {
         x.innerHTML="Geolocation is not supported by this browser.";
       }
     }
   };
 
-  var TowerPinView = function(model) {
-    this.model = model;
+  var TowerPinView = function(position) {
+    this.position = position;
   };
   TowerPinView.prototype = {
     displayMarker: function() {
-      var position = this.model.position;
-      var googlePos = new google.maps.LatLng();
+      var googlePos = new google.maps.LatLng(this.position.latitude,this.position.longitude);
       var marker = new google.maps.Marker({
         position: googlePos,
-        map: map,
+        map: map
+      });
     }
-  }
+  };
 
   var TowerView = function(model) {
     this.model = model;
@@ -80,11 +83,20 @@ var TowerMap = (function() {
           position:  new google.maps.LatLng(tower.latitude, tower.longitude),
           map: map
         });
-        this.towerPins.push(marker);        
+        this.towerPins.push(marker);
       }
     },
     bind: function() {
-      
+      $("#build-tower").on('click',$.proxy(this.onBuildTower, this));
+    },
+    onBuildTower: function(e) {
+      e.preventDefault();
+      var newTower = new TowerModel();
+      $(newTower).on('created', function (e,jsonTower) {
+        var newViewTower = new TowerPinView(jsonTower);
+        newViewTower.displayMarker();
+      });
+      newTower.create();
     }
   };
 
@@ -92,6 +104,7 @@ var TowerMap = (function() {
     init: function() {
       var towerView = new TowerView(new TowerModel());
       towerView.loadTowers();
+      towerView.bind();
     }
   };
 
@@ -107,11 +120,11 @@ function initialize() {
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
   map = new google.maps.Map(document.getElementById('map-canvas'),
-      mapOptions);
+    mapOptions);
 
   // load towers on map
   TowerMap.init();
 }
 google.maps.event.addDomListener(window, 'load', initialize);
 
-  
+

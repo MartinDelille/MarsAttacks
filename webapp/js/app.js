@@ -72,7 +72,6 @@ var map;
       });
       marker.towerModel = self.jsonTower;
       google.maps.event.addListener(marker, 'click', function() {
-        Missile.displayRectangle(marker.towerModel);
         TowerWindowInfo.display(marker);
       });
     }

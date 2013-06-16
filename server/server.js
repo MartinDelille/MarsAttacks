@@ -260,7 +260,10 @@ database.open(function(err){
     app.get("/backend/cleanup", function(req, res) {
         database.collection("aliens", function(err, collection) {
             collection.drop(function() {});
-        }); 
+        });
+        database.collection("towers", function(err, collection) {
+            collection.drop(function() {});
+        });
         res.send("Done");
     });
 

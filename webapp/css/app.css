@@ -1,12 +1,31 @@
 html, body {
 	margin: 0;
 	padding: 0;
+	border: 0px solid transparent;
+	height: 100%;
 }
 
 /* Layout */
 
-#app { margin: auto; width: 500px; position: relative; }
-#map-canvas { width: 500px; height: 500px; }
+#app { 
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+
+	margin: auto; 
+	position: relative; 
+}
+
+#map-canvas { 
+	-webkit-box-flex: 2; 
+}
+
+#app-wrapper, #app {
+	height: 100%;	
+}
+
+#app header, #map-canvas { 
+	display: -webkit-flex;
+}
 
 #map-canvas img { /* Hack CSS because Bootstrap affect the display of Google Map */
   max-width: none;
@@ -18,8 +37,15 @@ html, body {
 
 /* Heading */
 
-#app header { background-color: #3C3C3C; color: #FFFFFF; padding: 4px 8px; text-align: center; }
-	#app header h1 { font-size: 18px; text-transform: uppercase; }
+#app header { 
+	background-color: #3C3C3C; 
+	color: #FFFFFF; 
+	padding: 4px 8px; 
+	text-align: center;
+	height: 68px;
+}
+
+#app header h1 { font-size: 18px; text-transform: uppercase; }
 
 /* Controls */
 

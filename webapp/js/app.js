@@ -206,7 +206,8 @@ var AlienMap = (function() {
         var alien = this.model.aliens[i];
         var marker = new google.maps.Marker({
           position: new google.maps.LatLng(alien.lat, alien.lng),
-          map: map
+          map: map,
+          icon: 'img/ufo.png'
         });
       }  
     }

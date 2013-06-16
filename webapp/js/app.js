@@ -257,17 +257,22 @@ var AlienMap = (function() {
     this.markersByAlienId = {};
     $(this.model).on('loaded', $.proxy(this.onLoaded, this));
     SocketHandler.getInstance().on('aliens:move', $.proxy(this.onAliensMoved, this));
+    SocketHandler.getInstance().on('aliens:add', $.proxy(this.onAliensAdded, this));
+    SocketHandler.getInstance().on('aliens:delete', $.proxy(this.onAliensDeleted, this));
   };
   AliensView.prototype = {
     onLoaded: function() {
-      for (var i=0; i<this.model.aliens.length; i++) {
-        var alien = this.model.aliens[i];
-        var marker = new google.maps.Marker({
-          position: new google.maps.LatLng(alien.lat, alien.lng),
-          map: map,
-          icon: 'img/ufo.png'
-        });
-        this.markersByAlienId[alien._id] = marker;
+      this.addAliens(this.model.aliens);
+    },
+    addAliens: function(aliensArray){
+        for (var i=0; i<aliensArray.length; i++) {
+            var alien = aliensArray[i];
+            var marker = new google.maps.Marker({
+              position: new google.maps.LatLng(alien.lat, alien.lng),
+              map: map,
+              icon: 'img/ufo.png'
+            });
+            this.markersByAlienId[alien._id] = marker;
       }
     },
     onAliensMoved: function(aliensArray) {
@@ -279,6 +284,24 @@ var AlienMap = (function() {
             this.moveSmoothly(marker, alien.lat, alien.lng);
         }
       }
+    },
+    onAliensAdded: function(aliensArray){
+        this.model.aliens = this.model.aliens.concat(aliensArray);
+        this.addAliens(this.model.aliens);
+    },
+    onAliensDeleted: function() {
+        for(var i = this.model.aliens.length - 1, alienMarker; i >=0; --i){
+            alienMarker = this.model.aliens[i];
+            
+            if(alienMarker.moveInAction){
+                window.clearTimeout(alienMarker.moveInAction);
+                alienMarker.moveInAction = null;
+            }
+            
+            alienMarker.setMap(null); // remove it of Google Maps
+        }
+        
+        this.model.aliens.length = 0; // Flush the database
     },
     moveSmoothly: function(alienMarker, latitude, longitude) {
         if(alienMarker.moveInAction){

@@ -1,22 +1,57 @@
 html, body {
 	margin: 0;
 	padding: 0;
+	border: 0px solid transparent;
+	height: 100%;
+	background-color: black;
 }
 
 /* Layout */
 
-#app { margin: auto; width: 500px; position: relative; }
-#map-canvas { width: 500px; height: 500px; }
+#app { 
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+
+	margin: auto; 
+	position: relative; 
+
+}
+
+#map-canvas { 
+	-webkit-box-flex: 2; 
+}
+
+#app-wrapper, #app {
+	height: 100%;	
+}
+
+#app header, #map-canvas { 
+	display: -webkit-flex;
+}
+
+#map-canvas img { /* Hack CSS because Bootstrap affect the display of Google Map */
+  max-width: none;
+}
+
+#map-canvas label { /* Hack CSS because Bootstrap affect the display of Google Map */
+  width: auto; display:inline; 
+}
 
 /* Heading */
 
-#app header { background-color: #3C3C3C; color: #FFFFFF; padding: 4px 8px; text-align: center; }
-	#app header h1 { font-size: 18px; text-transform: uppercase; }
+#app #logo { 
+	width: 354px;
+	height: 100px;
+	margin: 0 auto;
+}
+
+#app header h1 { font-size: 18px; text-transform: uppercase; }
 
 /* Controls */
 
-#controls { text-align: center; position: absolute; width: 100%; bottom: 0; }
-	/* button transitions */
-	#controls #build-tower { -webkit-transition-property: height; -webkit-transition-duration: 0.2s; -webkit-transition-timing-function: ease-out; }
-	#controls #build-tower { border-radius: 0; border-top-left-radius: 30px; border-top-right-radius: 30px; display: inline-block; height: 0; }
-	#controls #build-tower:hover { height: 50px; }
+#controls { position: absolute; width: 100%; bottom: 0; height: 60px; }
+
+/* button transitions */
+#controls #build-tower { -webkit-transition-property: height; -webkit-transition-duration: 0.2s; -webkit-transition-timing-function: ease-out; position: absolute; bottom: 0px; left: 50%; margin-left: -65px; }
+#controls #build-tower { border-radius: 0; border-top-left-radius: 30px; border-top-right-radius: 30px; display: inline-block; height: 0; }
+#controls #build-tower:hover { height: 50px; }

@@ -7,7 +7,7 @@ var map;
  var TowerMap = (function() {
 
   var TowerModel = function() {
-    this.endpoint = 'http://localhost:8080/towers';
+    this.endpoint = 'http://localhost:8080/backend/towers';
     this.towers = null;
   };
 
@@ -71,10 +71,12 @@ var map;
         icon: iconTower
       });
       marker.towerModel = self.jsonTower;
-      // console.log(marker);
-      // google.maps.event.addListener(marker, 'click', function() {
-      //   TowerWindowInfo.display(marker);
-      // });
+      google.maps.event.addListener(marker, 'click', function() {
+        console.log("ok");
+        console.log(marker.towerModel);
+        Missile.displayRectangle(marker.towerModel);
+        TowerWindowInfo.display(marker);
+      });
     }
   };
 
@@ -122,7 +124,7 @@ var map;
 var TowerWindowInfo = (function() {
 
   var TowerWindowInfoModel = function() {
-    this.endpoint = 'http://10.0.0.104:8080/towers';
+    this.endpoint = 'http://10.0.0.104:8080/backend/towers';
   };
 
   TowerWindowInfoModel.prototype = {
@@ -160,8 +162,8 @@ var TowerWindowInfo = (function() {
       });
       infowindow.open(map,marker);
       google.maps.event.addListener(infowindow,'closeclick',function(){
-        alert("I am close");
-      })
+        console.log("closing");
+      });
     }
   };
 
@@ -177,13 +179,75 @@ var TowerWindowInfo = (function() {
 
 })();
 
+var Missile = (function() {
+
+  var MissileModel = function(){
+    this.center = null;
+  };
+  MissileModel.prototype = {
+    getCenter:function(alien){
+      console.log(alien);
+      return new google.maps.LatLng(alien.latitude,alien.longitude);
+    }
+  };
+
+  var MissileView = function(){
+  };
+  MissileView.prototype = {
+    drawCircle: function(center) {
+      var populationOptions = {
+        strokeColor: "#FF0000",
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+        fillColor: "#FF0000",
+        fillOpacity: 0.35,
+        map: map,
+        center: center,
+        radius: 100 };
+      cityCircle = new google.maps.Circle(populationOptions);
+    },
+    drawRectangle: function(center) {
+      console.log(center);
+      console.log(center.jb);
+      var rectOptions = {
+        strokeColor: "#FF0000",
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+        fillColor: "#FF0000",
+        fillOpacity: 0.35,
+        map: map,
+        bounds: new google.maps.LatLngBounds
+            (
+            new google.maps.LatLng(center.jb-0.01, center.kb-0.01),
+            new google.maps.LatLng(center.jb+0.01, center.kb+0.01)
+            )
+      };
+      rectangle = new google.maps.Rectangle(rectOptions);
+    }
+  };
+
+  return {
+    displayCircle: function(alien){
+      missileModel = new MissileModel();
+      console.log(missileModel.getCenter(alien));
+      missileView = new MissileView();
+      missileView.drawCircle(missileModel.getCenter(alien));
+    },
+    displayRectangle: function(tower){
+      missileModel = new MissileModel();
+      missileView = new MissileView();
+      missileView.drawRectangle(missileModel.getCenter(tower));
+    }
+  };
+})();
+
 /**
  * Manages aliens on the map.
  */
 var AlienMap = (function() {
 
   var AliensModel = function() {
-    this.endpoint = 'http://localhost:8080/aliens';
+    this.endpoint = 'http://localhost:8080/backend/aliens';
     this.aliens = null;
   };
   AliensModel.prototype = {
@@ -209,7 +273,7 @@ var AlienMap = (function() {
           map: map,
           icon: 'img/ufo.png'
         });
-      }  
+      }
     }
   };
 
@@ -222,6 +286,9 @@ var AlienMap = (function() {
   };
 
 })();
+
+
+
 
 
 
@@ -240,6 +307,13 @@ function initialize() {
   // load  maps
   TowerMap.init();
   AlienMap.init();
+  
+  // Initialize webSocket
+  var socket = io.connect("http://localhost:1337");
+  socket.on("connected", function (data) {
+    console.log("We are connected: " + JSON.stringify(data));
+    //socket.emit('my other event', { my: 'data' });
+  });
 }
 google.maps.event.addDomListener(window, 'load', initialize);
 

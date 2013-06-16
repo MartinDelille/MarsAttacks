@@ -19,6 +19,12 @@ var
     express = require("express"),
     
     /**
+     * Instance of the WebSocket server
+     * @type {SocketIo}
+     */
+    socketIO = require("socket.io"),
+    
+    /**
      * Mongo instance to communicate with the MongoDB instance
      * @type {MongoDB}
      */
@@ -46,10 +52,31 @@ var
 console.log("Open the database");
 database.open(function(err){
     if(err){
+        console.log("An error occured with the database")
         process.exit(1);
     }
     
     console.log("Database opened");
+    console.log("Start to intialize our WebSocket server");
+    
+    // WebSocket Definition
+    socketIO = socketIO.listen(1337);
+    
+    socketIO.sockets.on('connection', function (socket) {
+        socket.emit("connected", { timestamp: Date.now(),  });
+        
+        /*client.on("message", function () {
+        }) ;
+        
+        client.on("disconnect", function () {
+        });*/
+    });
+    
+    function broadCastToClients(messageName, jsonObjectOrArray) {
+        socketIO.sockets.emit(messageName, jsonObjectOrArray);
+    }
+    
+    console.log("WebSocket server is ready");
     console.log("Start to initialize our REST api");
 
     // REST api definition
@@ -58,7 +85,7 @@ database.open(function(err){
     /**
      * Get a battle map
      */
-    app.get("/maps/:id", function(req, res) {
+    app.get("/backend/maps/:id", function(req, res) {
         console.log("A request is done on /maps/:id");
         database.collection("maps", function(err, collection) {
             if(err){
@@ -80,7 +107,7 @@ database.open(function(err){
     /**
      * Get all towers
      */
-    app.get("/towers", function(req, res) {
+    app.get("/backend/towers", function(req, res) {
         console.log("A request is done on /towers on GET");
         database.collection("towers", function(err, collection) {
             if(err){
@@ -102,7 +129,7 @@ database.open(function(err){
     /**
      * Put a new tower
      */
-    app.put("/towers", function(req, res) {
+    app.put("/backend/towers", function(req, res) {
         console.log("A request is done on /towers on PUT");
         
         if(!req.body) {
@@ -120,7 +147,7 @@ database.open(function(err){
     /**
      * Update a tower
      */
-    app.post("/towers/:id", function(req, res) {
+    app.post("/backend/towers/:id", function(req, res) {
         console.log("A request is done on /towers on POST");
         
         database.collection("towers", function(err, collection) {
@@ -131,7 +158,7 @@ database.open(function(err){
     });
     
 
-    app.get("/towers/:id", function (req, res) {
+    app.get("/backend/towers/:id", function (req, res) {
         console.log("A request is done on /towers/:id on GET");
         database.collection("towers", function(err, collection) {
             if(err){
@@ -152,7 +179,7 @@ database.open(function(err){
     /**
      * Remove a tower
      */
-    app["delete"]("/towers/:id", function(req, res) {
+    app["delete"]("/backend/towers/:id", function(req, res) {
         console.log("A request is done on /towers on DELETE");
         
         database.collection("towers", function(err, collection) {
@@ -169,7 +196,7 @@ database.open(function(err){
     /**
      * Create a random cloud of aliens in one of the 4th cardinal points.
      */
-    app.post("/aliens", function(req, res) {
+    app.post("/backend/aliens", function(req, res) {
         database.collection("aliens", function(err, collection) {
             var aliens = Aliens.AlienFactory.createCloud(TOWN_CENTER);
             var results = [];
@@ -186,7 +213,7 @@ database.open(function(err){
     /**
      * Get all aliens
      */
-    app.get("/aliens", function(req, res) {
+    app.get("/backend/aliens", function(req, res) {
         console.log("A request is done on /aliens on GET");
         database.collection("aliens", function(err, collection) {
             if(err){

@@ -1,6 +1,7 @@
 /**
  * Module to manager towers on the map.
  */
+
  var TowerMap = (function() {
 
   var TowerModel = function() {
@@ -59,10 +60,12 @@
   };
   TowerPinView.prototype = {
     displayMarker: function() {
+      var iconTower = 'img/tower.png';
       var googlePos = new google.maps.LatLng(this.position.latitude,this.position.longitude);
       var marker = new google.maps.Marker({
         position: googlePos,
-        map: map
+        map: map,
+        icon: iconTower
       });
     }
   };
@@ -77,15 +80,10 @@
       this.towerPins = [];
     },
     draw: function() {
-    	var iconTower = 'img/tower.png';
       for (var i=0; i<this.model.towers.length; i++) {
         var tower = this.model.towers[i];
-        var marker = new google.maps.Marker({
-          position:  new google.maps.LatLng(tower.latitude, tower.longitude),
-          map: map,
-          icon: iconTower
-        });
-        this.towerPins.push(marker);
+        modelPinView = new TowerPinView(tower);
+        modelPinView.displayMarker();
       }
     },
     bind: function() {

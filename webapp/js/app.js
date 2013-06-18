@@ -8,7 +8,7 @@ define(["jquery", "socket.io", "gmaps"], function($, io, google) {
    var TowerMap = (function() {
 
     var TowerModel = function() {
-      this.endpoint = 'backend/towers';
+      this.endpoint = '/backend/towers';
       this.towers = null;
     };
 
@@ -146,7 +146,7 @@ define(["jquery", "socket.io", "gmaps"], function($, io, google) {
   var TowerWindowInfo = (function() {
 
     var TowerWindowInfoModel = function() {
-      this.endpoint = 'backend/towers';
+      this.endpoint = '/backend/towers';
     };
 
     TowerWindowInfoModel.prototype = {
@@ -264,7 +264,7 @@ define(["jquery", "socket.io", "gmaps"], function($, io, google) {
   var AlienMap = (function() {
 
     var AliensModel = function() {
-      this.endpoint = 'backend/aliens';
+      this.endpoint = '/backend/aliens';
       this.aliens = null;
     };
     AliensModel.prototype = {
@@ -375,7 +375,7 @@ define(["jquery", "socket.io", "gmaps"], function($, io, google) {
       getInstance: function() {
         if (socket === null) {
           // Initialize webSocket
-          socket = io.connect("hhttp://test.dubware.net:1337");
+          socket = io.connect("http://test.dubware.net:1337");
           socket.on("connected", function (data) {
             console.log("We are connected: " + JSON.stringify(data));
             //socket.emit('my other event', { my: 'data' });

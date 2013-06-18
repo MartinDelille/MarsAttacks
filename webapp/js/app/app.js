@@ -1,4 +1,6 @@
-define(["jquery", "socket.io", "gmaps"], function($, io, google) {
+define(
+  ["backbone", "jquery", "socket.io", "gmaps", "models/Tower"], 
+  function(Backbone, $, io, google, Tower) {
 
   /**
    * Module to manager towers on the map.
@@ -26,7 +28,7 @@ define(["jquery", "socket.io", "gmaps"], function($, io, google) {
       create: function() {
         var self = this;
         var towerPinModel = new TowerPinModel();
-        towerPinModel.getLocation(function(position){
+        towerPinModel.getLocation(function(position) {
           // complete here
           $.ajax({
             type : "PUT",
@@ -387,24 +389,36 @@ define(["jquery", "socket.io", "gmaps"], function($, io, google) {
   })();
 
   var GRENOBLE_LAT_LNG = new google.maps.LatLng(45.1667, 5.7167);
+  
+  var MapView = Backbone.View.extend({
+    el: '#map-canvas',
 
-  function initialize() {
-    var mapOptions = {
-      zoom: 8,
-      center: GRENOBLE_LAT_LNG,
-      mapTypeId: google.maps.MapTypeId.ROADMAP
-    };
-    map = new google.maps.Map(document.getElementById('map-canvas'),
-      mapOptions);
-    map.setZoom(13);
+    initialize: function(options) {
+      this.towers = options.towers;
+    },
 
-    // load  maps
+    render: function() {
+      var mapOptions = {
+        zoom: 8,
+        center: GRENOBLE_LAT_LNG,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      };
+      this.map = new google.maps.Map(this.el, mapOptions);
+      this.map.setZoom(13);
+    }
+  });
+
+  /*
     TowerMap.init();
     AlienMap.init();
-  }
+  */
 
   return {
-    init: initialize
+    init: function() {
+      var towers = new TowerModel.collection();
+      new MapView().render(towers);
+      towers.fetch();
+    }
   }
 
 });

@@ -5,5 +5,8 @@ MarsAttack game, devcamp grenoble
 
 Let's go and kill some martians !
 
-test 1,2, 3
+## Prerequisites ##
 
+Please be sure to have nodejs and jamjs (use for dependency management for webapp) installed:
+*   nodejs http://nodejs.org/
+*   jamjs http://jamjs.org/

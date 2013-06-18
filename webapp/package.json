@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Mars Attack",
   "jam": {
-    "packageDir": "lib/jam/",
+    "packageDir": "js/vendor/",
     "dependencies": {
       "jquery": "1.9.1",
       "underscore": "1.4.4",

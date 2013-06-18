@@ -1,4 +1,4 @@
-require(['jquery'], function($) {
+define(["jquery", "socket.io", "gmaps"], function($, io, google) {
 
   /**
    * Module to manager towers on the map.
@@ -8,7 +8,7 @@ require(['jquery'], function($) {
    var TowerMap = (function() {
 
     var TowerModel = function() {
-      this.endpoint = 'http://test.dubware.net/mars/backend/towers';
+      this.endpoint = 'backend/towers';
       this.towers = null;
     };
 
@@ -145,7 +145,7 @@ require(['jquery'], function($) {
   var TowerWindowInfo = (function() {
 
     var TowerWindowInfoModel = function() {
-      this.endpoint = 'http://test.dubware.net/mars/backend/towers';
+      this.endpoint = 'backend/towers';
     };
 
     TowerWindowInfoModel.prototype = {
@@ -263,7 +263,7 @@ require(['jquery'], function($) {
   var AlienMap = (function() {
 
     var AliensModel = function() {
-      this.endpoint = 'http://test.dubware.net/mars/backend/aliens';
+      this.endpoint = 'backend/aliens';
       this.aliens = null;
     };
     AliensModel.prototype = {
@@ -402,7 +402,9 @@ require(['jquery'], function($) {
     TowerMap.init();
     AlienMap.init();
   }
-  google.maps.event.addDomListener(window, 'load', initialize);
 
+  return {
+    init: initialize
+  }
 
 });

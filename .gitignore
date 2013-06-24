@@ -1,7 +1,8 @@
-/server/.project
 /*/.idea/
 /*/local.properties
 /*/.project
 /*/.classpath
 /*/bin/
 /*/out/
+/*/.project
+/webapp/lib/jam/

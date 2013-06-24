@@ -1,6 +1,84 @@
-html, body, #map-canvas {
+html, body {
 	margin: 0;
 	padding: 0;
-	height: 500px;
-	width: 500px;
+	border: 0px solid transparent;
+	height: 100%;
+	background-color: black;
 }
+
+/* Layout */
+
+#app { 
+	display: -webkit-box;
+	display: -moz-box;
+	display: box;
+	-webkit-box-orient: vertical;
+	-moz-box-orient: vertical;
+	box-orient: vertical;
+
+	margin: auto; 
+	position: relative; 
+
+}
+
+#map-canvas { 
+	-webkit-box-flex: 2; 
+	-moz-box-flex: 2; 
+	box-flex: 2; 
+}
+
+#app-wrapper, #app {
+	height: 100%;
+	width: 100%;
+}
+
+#app header, #map-canvas { 
+	display: -webkit-flex;
+	display: -moz-flex;
+	display: flex;
+	text-align:	center;
+}
+
+#map-canvas img { /* Hack CSS because Bootstrap affect the display of Google Map */
+  max-width: none;
+}
+
+#map-canvas label { /* Hack CSS because Bootstrap affect the display of Google Map */
+  width: auto; display:inline; 
+}
+
+/* Heading */
+
+#app-wrapper #app #logo { 
+	width: 100%;
+	height: 100px;
+	margin: 0 auto;
+	text-align: center;
+}
+
+#app header h1 { font-size: 18px; text-transform: uppercase; }
+
+/* Controls */
+
+#controls { position: absolute; width: 100%; bottom: 0; height: 70px; overflow: hidden; }
+
+/* button transitions */
+#controls #build-tower { 
+	-webkit-transition-property: height; 
+	-moz-transition-property: height; 
+	transition-property: height; 
+	-webkit-transition-duration: 0.2s; 
+	-moz-transition-duration: 0.2s; 
+	transition-duration: 0.2s; 
+	-webkit-transition-timing-function: ease-out; 
+	-moz-transition-timing-function: ease-out;
+	transition-timing-function: ease-out;
+	
+	position: absolute; 
+	bottom: 0px; 
+	left: 50%; 
+	margin-left: -65px;
+}
+
+#controls #build-tower { border-radius: 0; border-top-left-radius: 30px; border-top-right-radius: 30px; display: inline-block; height: 40px; }
+#controls #build-tower:hover { height: 60px; }

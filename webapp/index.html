@@ -1,25 +1,26 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8">
-  <title>Mars Attack</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
-  <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="css/app.css" />
-  <link rel="stylesheet" href="css/aliens.css" />
+	<meta charset="utf-8">
+	<title>Mars Attack</title>
+	<link rel="stylesheet" href="lib/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/app.css">
 </head>
 <body>
-	<div id="counter-next-attack"></div>
-	<div id="counter-alien-win"></div>
-	<div id="map-canvas"></div>
-	<a class="btn btn-primary btn-large" onclick="getLocation()">
-      Build Tower
-    </a>
-  
-  <script type="text/javascript" src="lib/jquery.js"></script>
-  <script type="text/javascript" src="lib/bootstrap/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=geometry"></script>
-  <script type="text/javascript" src="js/app.js"></script>
-  <script type="text/javascript" src="js/aliens.js"></script>
+	<div id="app-wrapper">
+		<div id="app">
+			<div id="logo" ><img src="img/mars_attacks.png"></div>
+			<div id="map-canvas"></div>
+			<div id="controls">
+				<button class="btn btn-primary btn-large" id="build-tower">Build tower</button>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript" src="lib/socket.io.min.js"></script>
+	<script type="text/javascript" src="lib/jquery.js"></script>
+	<script type="text/javascript" src="lib/bootstrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+	<script type="text/javascript" src="js/app.js"></script>
 </body>
 </html>

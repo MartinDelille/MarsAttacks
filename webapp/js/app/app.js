@@ -1,6 +1,6 @@
 define(
-  ["backbone", "jquery", "socket.io", "gmaps", "js/app/models/TowerModel"], 
-  function(Backbone, $, io, google, TowerModel) {
+  ["underscore", "backbone", "jquery", "socket.io", "gmaps", "js/app/models/TowerModel"], 
+  function(_, Backbone, $, io, google, TowerModel) {
 
   /**
    * Module to manager towers on the map.
@@ -390,6 +390,65 @@ define(
   })();
 
   var GRENOBLE_LAT_LNG = new google.maps.LatLng(45.1667, 5.7167);
+
+  /**
+   * Handles a collection of models to be drawn on the map.
+   */
+  var MapLayerCollectionView = Backbone.View.extend({
+
+    // markerConfig: the object to configurate the desired rendered marker
+    markerConfig: {},
+
+    initialize: function(options) {
+      if (!_.has(options, "map")) {
+        throw "The map instance must be defined";
+      }
+      this.map = options.map;
+      this.collection.on("add", this.onModelAdded, this);
+    },
+
+    /**
+     * called when a model is added, the given model is assumed to have
+     * the proper 'latitude' and 'longitude' data.
+     *
+     * If it's not the case, override the determineCoords method.
+     */ 
+    onModelAdded: function(model) {
+      this.drawModel(model);
+    },
+
+    drawModel: function(model) {
+      var coords = this.determineCoords(model);
+      var position = new google.maps.LatLng(coords.latitude, coords.longitude);
+      var markerOpts = _.extend({}, {
+        position: position,
+        map: this.map
+      }, this.markerConfig);
+      var marker = new google.maps.Marker(markerOpts);
+    },
+
+    render: function() {
+      var self = this;
+      this.collection.each(function(model) {
+        self.drawModel(model);
+      });
+    },
+
+    determineCoords: function(model) {
+      return {
+        latitude: model.get('latitude'),
+        longitude: model.get('longitude')
+      }
+    }
+
+  });
+
+  /**
+   * Defines the towers layer view.
+   */
+  var TowersLayerView = MapLayerCollectionView.extend({
+    markerConfig: { icon: "img/tower.png" }
+  });
   
   /**
    * High-level view to control the whole map.
@@ -398,23 +457,12 @@ define(
     el: '#map-canvas',
 
     initialize: function() {
-      this.collection.on('add', this.onTowerAdded, this);
-    },
-
-    onTowerAdded: function(tower) {
-      var self = this;
-      var iconTower = 'img/tower.png';
-      var googlePos = new google.maps.LatLng(tower.get('latitude'),tower.get('longitude'));
-      var marker = new google.maps.Marker({
-        position: googlePos,
-        map: this.map,
-        icon: iconTower
-      });
     },
 
     render: function() {
       this.renderMap();
-      this.renderTowers();
+      this.towersLayer = new TowersLayerView({ el: this.el, map: this.map, collection: this.options.towers });
+      this.towersLayer.render();
     },
 
     renderMap: function() {
@@ -425,17 +473,8 @@ define(
       };
       this.map = new google.maps.Map(this.el, mapOptions);
       this.map.setZoom(13);
-    },
-
-    renderTowers: function() {
-      var self = this;
-      this.collection.each(function(tower) {
-        var modelPinView = new TowerPinView(tower);
-        var marker = modelPinView.displayMarker();
-        self.towerPins.push(marker);
-        self.towerPinsIndexes[tower.get('_id')] = marker;
-      });
     }
+
   });
 
   /**
@@ -472,7 +511,7 @@ define(
   return {
     init: function() {
       var towers = new TowerModel.collection();
-      var mapView = new MapView({ collection: towers }).render();
+      var mapView = new MapView({ towers: towers }).render();
       var actionControls = new ActionControlsView({ collection: towers });
       towers.fetch();
     }

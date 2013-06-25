@@ -135,8 +135,8 @@ database.open(function(err){
     /**
      * Put a new tower
      */
-    app.put("/backend/towers", function(req, res) {
-        console.log("A request is done on /towers on PUT");
+    app.post("/backend/towers", function(req, res) {
+        console.log("A request is done on /towers on POST");
         
         if(!req.body) {
             res.send(400);

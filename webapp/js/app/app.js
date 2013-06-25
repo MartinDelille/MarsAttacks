@@ -390,8 +390,26 @@ define(
 
   var GRENOBLE_LAT_LNG = new google.maps.LatLng(45.1667, 5.7167);
   
+  /**
+   * High-level view to control the whole map.
+   */
   var MapView = Backbone.View.extend({
     el: '#map-canvas',
+
+    initialize: function() {
+      this.collection.on('add', this.onTowerAdded, this);
+    },
+
+    onTowerAdded: function(tower) {
+      var self = this;
+      var iconTower = 'img/tower.png';
+      var googlePos = new google.maps.LatLng(tower.get('latitude'),tower.get('longitude'));
+      var marker = new google.maps.Marker({
+        position: googlePos,
+        map: this.map,
+        icon: iconTower
+      });
+    },
 
     render: function() {
       this.renderMap();
@@ -419,6 +437,32 @@ define(
     }
   });
 
+  /**
+   * View to control the action buttons.
+   */
+  var ActionControlsView = Backbone.View.extend({
+    el: '#controls',
+
+    events: {
+      'click #build-tower': 'onAddTowerClick'
+    },
+
+    onAddTowerClick: function() {
+      // locating client
+      if (navigator.geolocation) {
+        var self = this;
+        navigator.geolocation.getCurrentPosition(function(position) {
+          // adding a tower
+          self.collection.create({
+            latitude: position.coords.latitude , longitude : position.coords.longitude, life : 100
+          });          
+        });
+      }
+
+    }
+
+  });
+
   /*
     TowerMap.init();
     AlienMap.init();
@@ -427,7 +471,8 @@ define(
   return {
     init: function() {
       var towers = new TowerModel.collection();
-      new MapView({ collection: towers }).render();
+      var mapView = new MapView({ collection: towers }).render();
+      var actionControls = new ActionControlsView({ collection: towers });
       towers.fetch();
     }
   }

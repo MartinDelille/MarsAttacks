@@ -1,6 +1,6 @@
 define(
-  ["underscore", "backbone", "jquery", "socket.io", "gmaps", "js/app/models/TowerModel", "js/app/models/AlienModel"], 
-  function(_, Backbone, $, io, google, TowerModel, AlienModel) {
+  ["underscore", "backbone", "jquery", "gmaps", "js/app/models/TowerModel", "js/app/models/AlienModel"], 
+  function(_, Backbone, $, google, TowerModel, AlienModel) {
 
   /**
    * Module to manager towers on the map.
@@ -369,25 +369,6 @@ define(
   })();
 
 
-  var SocketHandler = (function() {
-    var socket = null;
-
-    return {
-      getInstance: function() {
-        if (socket === null) {
-          // Initialize webSocket
-          socket = io.connect("http://test.dubware.net:1337");
-          socket.on("connected", function (data) {
-            console.log("We are connected: " + JSON.stringify(data));
-            //socket.emit('my other event', { my: 'data' });
-          });
-        }
-        return socket;
-      }
-    };
-
-  })();
-
   var GRENOBLE_LAT_LNG = new google.maps.LatLng(45.1667, 5.7167);
 
   /**
@@ -517,15 +498,9 @@ define(
           });          
         });
       }
-
     }
 
   });
-
-  /*
-    TowerMap.init();
-    AlienMap.init();
-  */
 
   return {
     init: function() {

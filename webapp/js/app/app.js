@@ -1,6 +1,6 @@
 define(
-  ["underscore", "backbone", "jquery", "socket.io", "gmaps", "js/app/models/TowerModel"], 
-  function(_, Backbone, $, io, google, TowerModel) {
+  ["underscore", "backbone", "jquery", "socket.io", "gmaps", "js/app/models/TowerModel", "js/app/models/AlienModel"], 
+  function(_, Backbone, $, io, google, TowerModel, AlienModel) {
 
   /**
    * Module to manager towers on the map.
@@ -407,7 +407,7 @@ define(
     },
 
     /**
-     * called when a model is added, the given model is assumed to have
+     * Called when a model is added, the given model is assumed to have
      * the proper 'latitude' and 'longitude' data.
      *
      * If it's not the case, override the determineCoords method.
@@ -448,6 +448,21 @@ define(
   var TowersLayerView = MapLayerCollectionView.extend({
     markerConfig: { icon: "img/tower.png" }
   });
+
+  /**
+   * Defines the aliens layer view.
+   */
+  var AliensLayerView = MapLayerCollectionView.extend({
+    markerConfig: { icon: "img/ufo.png" },
+
+    // TODO lat,lng must be consistent with tower's attributes
+    determineCoords: function(model) {
+      return {
+        latitude: model.get('lat'),
+        longitude: model.get('lng')
+      }
+    }
+  });
   
   /**
    * High-level view to control the whole map.
@@ -460,8 +475,13 @@ define(
 
     render: function() {
       this.renderMap();
-      this.towersLayer = new TowersLayerView({ el: this.el, map: this.map, collection: this.options.towers });
-      this.towersLayer.render();
+      // wait for for the map to be fully loaded to load layers
+      google.maps.event.addListenerOnce(this.map, 'idle', $.proxy(function() {
+        this.towersLayer = new TowersLayerView({ el: this.el, map: this.map, collection: this.options.towers });
+        this.aliensLayer = new AliensLayerView({ el: this.el, map: this.map, collection: this.options.aliens });
+        this.towersLayer.render();
+        this.aliensLayer.render();        
+      }, this));
     },
 
     renderMap: function() {
@@ -510,9 +530,14 @@ define(
   return {
     init: function() {
       var towers = new TowerModel.collection();
-      var mapView = new MapView({ towers: towers }).render();
+      var aliens = new AlienModel.collection();
+      var mapView = new MapView({ 
+        towers: towers,
+        aliens: aliens
+      }).render();
       var actionControls = new ActionControlsView({ collection: towers });
       towers.fetch();
+      aliens.fetch();
     }
   }
 

@@ -287,14 +287,16 @@ database.open(function(err){
     
     // Start a CRON
     console.log("Now, we will start a cron timer !");
-    setInterval(function() {
+/*    setInterval(function() {
         console.log("Cron in action - move the aliens");
-       request.get("http://localhost:8080/backend/aliens/moves/forward", { }, function(){
+        request.get("http://localhost:8080/backend/aliens/moves/forward", { }, function(){
             console.log("Cron: aliens on the road !");
         });
         
     }, 1000 * 5); // 5 seconds
-    
+*/
+
+/*    
     setInterval(function() {
         console.log("Cron in action - add some aliens");
         request.post("http://localhost:8080/backend/aliens", { }, function(){
@@ -302,7 +304,7 @@ database.open(function(err){
         });
         
     }, 1000 * 60 * 10); // 10 minutes
-    
+*/    
     setInterval(function() {
         console.log("Cron in action - remove some aliens");
         

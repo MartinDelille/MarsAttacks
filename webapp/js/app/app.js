@@ -1,6 +1,6 @@
 define(
-  ["backbone", "jquery", "socket.io", "gmaps", "models/Tower"], 
-  function(Backbone, $, io, google, Tower) {
+  ["backbone", "jquery", "socket.io", "gmaps", "js/app/models/TowerModel"], 
+  function(Backbone, $, io, google, TowerModel) {
 
   /**
    * Module to manager towers on the map.
@@ -393,11 +393,12 @@ define(
   var MapView = Backbone.View.extend({
     el: '#map-canvas',
 
-    initialize: function(options) {
-      this.towers = options.towers;
+    render: function() {
+      this.renderMap();
+      this.renderTowers();
     },
 
-    render: function() {
+    renderMap: function() {
       var mapOptions = {
         zoom: 8,
         center: GRENOBLE_LAT_LNG,
@@ -405,6 +406,16 @@ define(
       };
       this.map = new google.maps.Map(this.el, mapOptions);
       this.map.setZoom(13);
+    },
+
+    renderTowers: function() {
+      var self = this;
+      this.collection.each(function(tower) {
+        var modelPinView = new TowerPinView(tower);
+        var marker = modelPinView.displayMarker();
+        self.towerPins.push(marker);
+        self.towerPinsIndexes[tower.get('_id')] = marker;
+      });
     }
   });
 
@@ -416,7 +427,7 @@ define(
   return {
     init: function() {
       var towers = new TowerModel.collection();
-      new MapView().render(towers);
+      new MapView({ collection: towers }).render();
       towers.fetch();
     }
   }

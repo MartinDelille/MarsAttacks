@@ -271,11 +271,6 @@ database.open(function(err){
         database.collection("aliens", function(err, collection) {
             collection.drop(function() {});
         });
-        database.collection("towers", function(err, collection) {
-            collection.drop(function() {});
-        });
-
-        broadCastToClients('towers:delete');
         broadCastToClients('aliens:delete');
         res.send("Done");
     });

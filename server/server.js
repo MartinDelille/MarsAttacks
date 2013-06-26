@@ -206,17 +206,14 @@ database.open(function(err){
      */
     app.post("/backend/aliens", function(req, res) {
         console.log("A request is done on /aliens on POST");
+        var aliens = Aliens.AlienFactory.createCloud(TOWN_CENTER);
         database.collection("aliens", function(err, collection) {
-            var aliens = Aliens.AlienFactory.createCloud(TOWN_CENTER);
-            var results = [];
-            for (var i=0; i<aliens.length; i++) {
-                collection.insert(aliens, { safe:true }, function(err, result) {
-                    if (err !== 500) {
-                        broadCastToClients('aliens:add', aliens);
-                        res.send(result);
-                    }
-                });                
-            }
+            collection.insert(aliens, { safe: true }, function(err, result) {
+                if (err !== 500) {
+                    broadCastToClients('aliens:add', aliens);
+                    res.send(result);
+                }
+            });                
         });
     });
 
@@ -245,21 +242,17 @@ database.open(function(err){
     app.get("/backend/aliens/moves/forward", function(req, res) {
         console.log("A request is done on /aliens/moves/forward on GET");
         database.collection("aliens", function(err, collection) {
-            if(err) {
-                res.send(400);
-                return;
-            }
-            
-            var result = [];
-            var cursor = collection.find({ });
-            cursor.each(function(s, doc) {
-                if (doc != null && doc.lat != null && doc.lng != null) {
-                    new Aliens.AlienMoves(doc).forwardTo(TOWN_CENTER);
-                    result.push(doc);
-                    collection.update({_id: doc._id}, { lat: doc.lat, lng: doc.lng }, function() {
-                        broadCastToClients('aliens:move', [doc]);
+            collection.find().toArray(function(err, results) {
+                results.forEach(function(result) {
+                    // TODO Create a true model with mongoose
+                    new Aliens.AlienMoves(result).forwardTo(TOWN_CENTER);
+                    // updating in database
+                    // TODO extend Mongo to move aliens forward in one query ?
+                    collection.update({_id: result._id}, { lat: result.lat, lng: result.lng }, function() {
                     });
-                }
+                });
+                // sending notification to the client side
+                broadCastToClients('aliens:move', results);
             });
             res.send();
         });

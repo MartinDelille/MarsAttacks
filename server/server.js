@@ -283,14 +283,50 @@ database.open(function(err){
     
     // Start a CRON
     console.log("Now, we will start a cron timer !");
-    setInterval(function() {
-        console.log("Cron in action");
-        /*request.post("http://localhost:8080/backend/aliens", { }, function(){
-            console.log("Cron done");
-        });*/
-       
-       request.get("http://localhost:8080/backend/aliens/moves/forward", { }, function(){
+
+/*    setInterval(function() {
+        console.log("Cron in action - move the aliens");
+        request.get("http://localhost:8080/backend/aliens/moves/forward", { }, function(){
             console.log("Cron: aliens on the road !");
         });
-    }, 5000);
+        
+    }, 1000 * 5); // 5 seconds
+*/
+
+/*    
+    setInterval(function() {
+        console.log("Cron in action - add some aliens");
+        request.post("http://localhost:8080/backend/aliens", { }, function(){
+            console.log("Cron: aliens added !");
+        });
+        
+    }, 1000 * 60 * 10); // 10 minutes
+*/    
+    setInterval(function() {
+        console.log("Cron in action - remove some aliens");
+        
+        // Arbitraty remove some aliens !
+        database.collection("aliens", function(err, collection) {
+            if(err) {
+                return;
+            }
+            
+            collection.find({ }).toArray(function(err, aliens){
+                if(err){
+                    return;
+                }
+                
+                var aliensToRemove = [];
+                for(var i = aliens.length - 1; i >= 0; --i){
+                    if(Math.round(Math.random())){
+                        // We remove the alien !
+                        aliensToRemove.push(aliens[i]);
+                    }
+                }
+                
+                broadCastToClients('aliens:delete', aliensToRemove);
+            });
+        });
+        
+    }, 1000 * 60 * 60); // 60 minutes
 });

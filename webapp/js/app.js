@@ -67,38 +67,28 @@
     }
   };
 
-  var TowerView = function(model) {
-    this.model = model;
-  };
-  TowerView.prototype = {
-    loadTowers: function() {
-      $(this.model).on('loaded', $.proxy(this.draw, this));
-      this.model.load();
-      this.towerPins = [];
-    },
-    draw: function() {
-      for (var i=0; i<this.model.towers.length; i++) {
-        var tower = this.model.towers[i];
-        var marker = new google.maps.Marker({
-          position:  new google.maps.LatLng(tower.latitude, tower.longitude),
-          map: map
-        });
-        this.towerPins.push(marker);
-      }
-    },
-    bind: function() {
-      $("#build-tower").on('click',$.proxy(this.onBuildTower, this));
-    },
-    onBuildTower: function(e) {
-      e.preventDefault();
-      var newTower = new TowerModel();
-      $(newTower).on('created', function (e,jsonTower) {
-        var newViewTower = new TowerPinView(jsonTower);
-        newViewTower.displayMarker();
-      });
-      newTower.create();
-    }
-  };
+	var TowerView = function(model) {
+		this.model = model;
+	};
+	TowerView.prototype = {
+		loadTowers: function() {
+			$(this.model).on('loaded', $.proxy(this.draw, this));
+			this.model.load();
+			this.towerPins = [];
+		},
+		draw: function() {
+			var iconTower = 'img/tower.png';
+			for (var i=0; i<this.model.towers.length; i++) {
+				var tower = this.model.towers[i];
+				var marker = new google.maps.Marker({
+					position:  new google.maps.LatLng(tower.latitude, tower.longitude),
+					map: map,
+					icon: iconTower
+				});
+				this.towerPins.push(marker);				
+			}
+		}
+	};
 
   return {
     init: function() {

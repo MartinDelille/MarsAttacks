@@ -1,10 +1,10 @@
-/server/.project
 /*/.idea/
 /*/local.properties
 /*/.project
 /*/.classpath
 /*/bin/
 /*/out/
+<<<<<<< HEAD
 /android/.idea/
 /android/local.properties
 /android/out
@@ -20,3 +20,5 @@
 /android-test/bin
 /webapp/js/vendor/
 .DS_Store
+/*/.project
+/webapp/lib/jam/

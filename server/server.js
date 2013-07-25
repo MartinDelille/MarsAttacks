@@ -203,6 +203,7 @@ database.open(function(err){
             for (var i=0; i<aliens.length; i++) {
                 collection.insert(aliens, { safe:true }, function(err, result) {
                     if (err !== 500) {
+                        broadCastToClients('aliens:add', aliens);
                         res.send(result);
                     }
                 });                
@@ -260,10 +261,8 @@ database.open(function(err){
     app.get("/backend/cleanup", function(req, res) {
         database.collection("aliens", function(err, collection) {
             collection.drop(function() {});
-        });
-        database.collection("towers", function(err, collection) {
-            collection.drop(function() {});
-        });
+        }); 
+        broadCastToClients('aliens:delete');
         res.send("Done");
     });
 

@@ -146,6 +146,7 @@ database.open(function(err){
         database.collection("towers", function(err, collection) {
             collection.insert(req.body, { safe:true }, function(err, result) {
                 res.send(err ? 500 : result[0]);
+                broadCastToClients('tower:add', { towerId: result[0]._id });
             });
         });
     });
@@ -191,6 +192,7 @@ database.open(function(err){
         database.collection("towers", function(err, collection) {
             collection.remove({ "_id": new mongo.BSONPure.ObjectID(req.params.id) }, { safe:true }, function(err, result) {
                 res.send(err ? 500 : req.body);
+                broadCastToClients('tower:delete', { towerId: req.params.id });
             });
         });
     });
@@ -280,7 +282,6 @@ database.open(function(err){
         });
         
     }, 1000 * 5); // 5 seconds
-    
 /*    
     setInterval(function() {
         console.log("Cron in action - add some aliens");

@@ -386,6 +386,8 @@ define(
       }
       this.map = options.map;
       this.collection.on("add", this.onModelAdded, this);
+      // store markers by model id
+      this.markersById = {};
     },
 
     /**
@@ -406,6 +408,7 @@ define(
         map: this.map
       }, this.markerConfig);
       var marker = new google.maps.Marker(markerOpts);
+      this.markersById[model.get('_id')] = marker;
     },
 
     render: function() {
@@ -437,13 +440,40 @@ define(
   var AliensLayerView = MapLayerCollectionView.extend({
     markerConfig: { icon: "img/ufo.png" },
 
+    initialize: function() {
+      MapLayerCollectionView.prototype.initialize.apply(this, arguments);
+      this.collection.on('change:coords', this.onCoordsChanged, this);
+    },
+
+    modelEvents: {
+      'change:coords': 'onCoordsChanged'
+    },
+
     // TODO lat,lng must be consistent with tower's attributes
     determineCoords: function(model) {
       return {
         latitude: model.get('lat'),
         longitude: model.get('lng')
       }
+    },
+
+    onCoordsChanged: function() {
+      this.collection.each($.proxy(this.changeCoord, this));
+    },
+
+    changeCoord: function(alien) {
+      // moving alien's marker, if there's any one
+      if (alien.get('_id') in this.markersById) {
+        var marker = this.markersById[alien.get('_id')];
+        var coords = this.determineCoords(alien);
+        var position = new google.maps.LatLng(coords.latitude, coords.longitude);
+        marker.setPosition(position);
+      } else {
+        // adding a new alien
+        this.drawModel(alien);
+      }
     }
+
   });
   
   /**

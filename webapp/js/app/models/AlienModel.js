@@ -5,6 +5,7 @@ define(
     // define alien and its collection
 
     var Alien = Backbone.Model.extend({
+        idAttribute: "_id",
         urlRoot: '/backend/aliens'
     });
 
@@ -17,6 +18,11 @@ define(
             SocketBroker.getInstance().on("aliens:add", function(aliensData) {
                 console.log("Aliens added", aliensData);
                 self.add(aliensData);
+            });
+            SocketBroker.getInstance().on("aliens:move", function(aliensData) {
+                console.log("Aliens moved", aliensData);
+                self.set(aliensData, { remove: false });
+                self.trigger("change:coords");
             });
         }
     });

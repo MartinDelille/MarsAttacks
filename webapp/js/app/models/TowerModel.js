@@ -5,6 +5,7 @@ define(
     // define tower and its collection
 
     var Tower = Backbone.Model.extend({
+        idAttribute: "_id",
         urlRoot: '/backend/towers'
     });
 

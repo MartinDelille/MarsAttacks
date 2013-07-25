@@ -200,177 +200,9 @@ define(
 
   })();
 
-  var Missile = (function() {
-
-    var MissileModel = function(){
-      this.center = null;
-    };
-    MissileModel.prototype = {
-      getCenter:function(alien){
-        return new google.maps.LatLng(alien.latitude,alien.longitude);
-      }
-    };
-
-    var MissileView = function(){
-    };
-    MissileView.prototype = {
-      drawCircle: function(center) {
-        var populationOptions = {
-          strokeColor: "#FF0000",
-          strokeOpacity: 0.8,
-          strokeWeight: 2,
-          fillColor: "#FF0000",
-          fillOpacity: 0.35,
-          map: map,
-          center: center,
-          radius: 100 };
-        cityCircle = new google.maps.Circle(populationOptions);
-      },
-      drawRectangle: function(center) {
-        console.log(center);
-        console.log(center.jb);
-        var rectOptions = {
-          strokeColor: "#FF0000",
-          strokeOpacity: 0.8,
-          strokeWeight: 2,
-          fillColor: "#FF0000",
-          fillOpacity: 0.35,
-          map: map,
-          bounds: new google.maps.LatLngBounds
-              (
-              new google.maps.LatLng(center.jb-0.01, center.kb-0.01),
-              new google.maps.LatLng(center.jb+0.01, center.kb+0.01)
-              )
-        };
-        rectangle = new google.maps.Rectangle(rectOptions);
-      }
-    };
-
-    return {
-      displayCircle: function(alien){
-        missileModel = new MissileModel();
-        missileView = new MissileView();
-        missileView.drawCircle(missileModel.getCenter(alien));
-      },
-      displayRectangle: function(tower){
-        missileModel = new MissileModel();
-        missileView = new MissileView();
-        missileView.drawRectangle(missileModel.getCenter(tower));
-      }
-    };
-  })();
-
-  /**
-   * Manages aliens on the map.
-   */
-  var AlienMap = (function() {
-
-    var AliensModel = function() {
-      this.endpoint = '/backend/aliens';
-      this.aliens = null;
-    };
-    AliensModel.prototype = {
-      load: function() {
-        $.get(this.endpoint, $.proxy(this.onLoaded, this));
-      },
-      onLoaded: function(aliensArray) {
-        this.aliens = aliensArray;
-        $(this).trigger('loaded');
-      }
-    };
-
-    var AliensView = function(model) {
-      this.model = model;
-      this.markersByAlienId = {};
-      $(this.model).on('loaded', $.proxy(this.onLoaded, this));
-      SocketHandler.getInstance().on('aliens:move', $.proxy(this.onAliensMoved, this));
-      SocketHandler.getInstance().on('aliens:add', $.proxy(this.onAliensAdded, this));
-      SocketHandler.getInstance().on('aliens:delete', $.proxy(this.onAliensDeleted, this));
-    };
-    AliensView.prototype = {
-      onLoaded: function() {
-        this.addAliens(this.model.aliens);
-      },
-      addAliens: function(aliensArray){
-          for (var i=0; i<aliensArray.length; i++) {
-              var alien = aliensArray[i];
-              var marker = new google.maps.Marker({
-                position: new google.maps.LatLng(alien.lat, alien.lng),
-                map: map,
-                icon: 'img/ufo.png'
-              });
-              this.markersByAlienId[alien._id] = marker;
-        }
-      },
-      onAliensMoved: function(aliensArray) {
-        for (var i=0; i<aliensArray.length; i++) {
-          var alien = aliensArray[i];
-          if (alien._id in this.markersByAlienId) {
-            var marker = this.markersByAlienId[alien._id];
-  //          marker.setPosition(new google.maps.LatLng(alien.lat, alien.lng));
-              this.moveSmoothly(marker, alien.lat, alien.lng);
-          }
-        }
-      },
-      onAliensAdded: function(aliensArray){
-          this.model.aliens = this.model.aliens.concat(aliensArray);
-          this.addAliens(this.model.aliens);
-      },
-      onAliensDeleted: function(aliensArray) {
-          var arrayToUse = aliensArray ? aliensArray : this.model.aliens;
-          
-          for(var i = arrayToUse.length - 1, alienMarker; i >=0; --i){
-              alienMarker = arrayToUse[i];
-              
-              if(alienMarker.moveInAction){
-                  window.clearTimeout(alienMarker.moveInAction);
-                  alienMarker.moveInAction = null;
-              }
-              
-              alienMarker.setMap(null); // remove it of Google Maps
-          }
-          
-          arrayToUse.length = 0; // Flush the array
-      },
-      moveSmoothly: function(alienMarker, latitude, longitude) {
-          if(alienMarker.moveInAction){
-              window.clearTimeout(alienMarker.moveInAction);
-              alienMarker.moveInAction = null;
-          }
-          
-          var lastPosition = alienMarker.getPosition(),
-              i = 0,
-              deltaLat = (latitude - lastPosition.lat()) / 100,
-              deltaLng = (longitude - lastPosition.lng()) / 100;
-              
-          function moveMarker() {
-              alienMarker.setPosition(new google.maps.LatLng(alienMarker.getPosition().lat() + deltaLat, alienMarker.getPosition().lng() + deltaLng));
-              
-              if(i !== 100){
-                  i++;
-                  alienMarker.moveInAction = setTimeout(moveMarker, 10);
-                  
-              } else {
-                  alienMarker.moveInAction = null;
-              }
-          }
-          
-          alienMarker.moveInAction = setTimeout(moveMarker, 10);
-      }
-    };
-
-    return {
-      init: function() {
-        var aliensModel = new AliensModel();
-        var aliensView = new AliensView(aliensModel);
-        aliensModel.load();
-      }
-    };
-
-  })();
-
-
   var GRENOBLE_LAT_LNG = new google.maps.LatLng(45.1667, 5.7167);
+
+  // extension of Marker to handle some specific stuff
 
   /**
    * Handles a collection of models to be drawn on the map.
@@ -409,6 +241,7 @@ define(
       }, this.markerConfig);
       var marker = new google.maps.Marker(markerOpts);
       this.markersById[model.get('_id')] = marker;
+      this.trigger('marker:drawn', model, marker);
     },
 
     render: function() {
@@ -431,7 +264,25 @@ define(
    * Defines the towers layer view.
    */
   var TowersLayerView = MapLayerCollectionView.extend({
-    markerConfig: { icon: "img/tower.png" }
+    markerConfig: { icon: "img/tower.png" },
+
+    infoTemplate: _.template("<div id=\"content\"><div id=\"siteNotice\"></div>"
+      + "<h1 id=\"firstHeading\" class=\"firstHeading\">Tower</h1>"
+      + "<div id=\"bodyContent\"><p><%= message %></p></div></div>"),
+
+    initialize: function() {
+      MapLayerCollectionView.prototype.initialize.apply(this, arguments);
+      this.on('marker:drawn', this.onMarkerDrawn, this);
+    },
+
+    onMarkerDrawn: function(model, marker) {
+      var self = this;
+      google.maps.event.addListener(marker, 'click', function() {
+        new google.maps.InfoWindow({
+          content: self.infoTemplate({ message: model.get('life') })
+        }).open(self.map, marker);
+      });
+    }
   });
 
   /**
@@ -492,7 +343,7 @@ define(
         this.towersLayer = new TowersLayerView({ el: this.el, map: this.map, collection: this.options.towers });
         this.aliensLayer = new AliensLayerView({ el: this.el, map: this.map, collection: this.options.aliens });
         this.towersLayer.render();
-        this.aliensLayer.render();        
+        this.aliensLayer.render();
       }, this));
     },
 

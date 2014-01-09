@@ -35,8 +35,8 @@ You will need a local web server to be able to run the application locally. Here
     ProxyPass /backend http://localhost:8080/backend
     ProxyPassReverse /backend http://localhost:8080/backend
 </VirtualHost>
+```
 
 Make sure to point redirect the domain name to your local server in _/etc/hosts_ :
 
 	127.0.0.1	www.marsattacks.me marsattacks.me
-```

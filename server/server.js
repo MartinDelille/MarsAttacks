@@ -282,7 +282,7 @@ database.open(function(err){
         });
         
     }, 1000 * 5); // 5 seconds
-/*    
+    
     setInterval(function() {
         console.log("Cron in action - add some aliens");
         request.post("http://localhost:8080/backend/aliens", { }, function(){
@@ -290,7 +290,7 @@ database.open(function(err){
         });
         
     }, 1000 * 60 * 10); // 10 minutes
-*/    
+    
     setInterval(function() {
         console.log("Cron in action - remove some aliens");
         

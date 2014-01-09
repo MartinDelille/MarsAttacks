@@ -12,7 +12,8 @@ Please be sure to have nodejs, jamjs (use for dependency management for webapp) 
 *   jamjs : http://jamjs.org/
 *   mongodb : http://www.mongodb.org/
 
-After cloning the repo, cd to webapp/ and perform the jam install command on your webapp to install required deps.
+After cloning the repo, cd to webapp/ and perform the following command on your webapp to install required deps:
+	jam install
 
 ## Local development ##
 

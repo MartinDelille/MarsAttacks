@@ -7,9 +7,10 @@ Let's go and kill some martians !
 
 ## Prerequisites ##
 
-Please be sure to have nodejs and jamjs (use for dependency management for webapp) installed:
-*   nodejs http://nodejs.org/
-*   jamjs http://jamjs.org/
+Please be sure to have nodejs, jamjs (use for dependency management for webapp) and mongodb installed:
+*   nodejs : http://nodejs.org/
+*   jamjs : http://jamjs.org/
+*   mongodb : http://www.mongodb.org/
 
 After cloning the repo, cd to webapp/ and perform the jam install command on your webapp to install required deps.
 
@@ -28,9 +29,14 @@ You will need a local web server to be able to run the application locally. Here
       Allow from all
     </Directory>
     DocumentRoot "<YOUR ROOT>"
-    ServerName wwwdev
+    ServerName www.marsattacks.me
+    ServerAlias marsattacks.me
 
     ProxyPass /backend http://localhost:8080/backend
     ProxyPassReverse /backend http://localhost:8080/backend
 </VirtualHost>
+
+Make sure to point redirect the domain name to your local server in _/etc/hosts_ :
+
+	127.0.0.1	www.marsattacks.me marsattacks.me
 ```

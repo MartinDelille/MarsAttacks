@@ -136,7 +136,6 @@ define(
    * High-level view to control the whole map.
    */
   var MapView = Backbone.View.extend({
-    el: '#map-canvas',
 
     initialize: function() {
     },
@@ -144,8 +143,8 @@ define(
     render: function() {
       this.renderMap();
 
-      this.towersLayer = new TowersLayerView({ el: this.el, map: this.map, collection: this.options.towers });
-      this.aliensLayer = new AliensLayerView({ el: this.el, map: this.map, collection: this.options.aliens });
+      this.towersLayer = new TowersLayerView({ map: this.map, collection: this.options.towers });
+      this.aliensLayer = new AliensLayerView({ map: this.map, collection: this.options.aliens });
       this.towersLayer.render();
       this.aliensLayer.render();
     },

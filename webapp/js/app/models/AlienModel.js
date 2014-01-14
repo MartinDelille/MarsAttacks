@@ -20,7 +20,7 @@ define(
                 self.add(aliensData);
             });
             SocketBroker.getInstance().on("aliens:move", function(aliensData) {
-                console.log("Aliens moved", aliensData);
+                console.log("Aliens moved");
                 self.set(aliensData, { remove: false });
                 self.trigger("change:coords");
             });

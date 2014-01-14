@@ -159,6 +159,13 @@ define(
 		// start the map in South-East England
 		this.map.setView(GRENOBLE_LAT_LNG,13);
 		this.map.addLayer(osm);
+
+      if (navigator.geolocation) {
+        var self = this;
+        navigator.geolocation.getCurrentPosition(function(position) {
+					self.map.setView(new L.LatLng(position.coords.latitude, position.coords.longitude), 13);
+				});
+			}
     }
 
   });

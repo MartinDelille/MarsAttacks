@@ -1,6 +1,6 @@
 define(
-  ["underscore", "backbone", "jquery", "gmaps", "js/app/models/TowerModel", "js/app/models/AlienModel"], 
-  function(_, Backbone, $, google, TowerModel, AlienModel) {
+  ["underscore", "backbone", "jquery", "js/app/models/TowerModel", "js/app/models/AlienModel"], 
+  function(_, Backbone, $, TowerModel, AlienModel) {
 
   var GRENOBLE_LAT_LNG = new L.LatLng(45.1667, 5.7167);
 

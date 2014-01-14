@@ -2,8 +2,9 @@ define(
   ["underscore", "backbone", "jquery", "gmaps", "js/app/models/TowerModel", "js/app/models/AlienModel"], 
   function(_, Backbone, $, google, TowerModel, AlienModel) {
 
-  var GRENOBLE_LAT_LNG = new google.maps.LatLng(45.1667, 5.7167);
+  var GRENOBLE_LAT_LNG = new L.LatLng(45.1667, 5.7167);
 
+  
   // extension of Marker to handle some specific stuff
 
   /**
@@ -11,8 +12,8 @@ define(
    */
   var MapLayerCollectionView = Backbone.View.extend({
 
-    // markerConfig: the object to configurate the desired rendered marker
-    markerConfig: {},
+    // markerIcon: the icon to render the marker with
+    markerIcon: L.icon({}),
 
     initialize: function(options) {
       if (!_.has(options, "map")) {
@@ -36,12 +37,8 @@ define(
 
     drawModel: function(model) {
       var coords = this.determineCoords(model);
-      var position = new google.maps.LatLng(coords.latitude, coords.longitude);
-      var markerOpts = _.extend({}, {
-        position: position,
-        map: this.map
-      }, this.markerConfig);
-      var marker = new google.maps.Marker(markerOpts);
+      var position = new L.LatLng(coords.latitude, coords.longitude);
+      var marker = L.marker(position, {icon: this.markerIcon}).addTo(this.map);
       this.markersById[model.get('_id')] = marker;
       this.trigger('marker:drawn', model, marker);
     },
@@ -66,7 +63,11 @@ define(
    * Defines the towers layer view.
    */
   var TowersLayerView = MapLayerCollectionView.extend({
-    markerConfig: { icon: "img/tower.png" },
+    markerIcon: L.icon({ 
+    	iconUrl: "img/tower.png",
+		iconSize: [46, 46],
+		iconAnchor: [23, 23],
+	}),
 
     infoTemplate: _.template("<div id=\"content\"><div id=\"siteNotice\"></div>"
       + "<h1 id=\"firstHeading\" class=\"firstHeading\">Tower</h1>"
@@ -79,11 +80,9 @@ define(
 
     onMarkerDrawn: function(model, marker) {
       var self = this;
-      google.maps.event.addListener(marker, 'click', function() {
-        new google.maps.InfoWindow({
-          content: self.infoTemplate({ message: model.get('life') })
-        }).open(self.map, marker);
-      });
+      marker.bindPopup(
+      	self.infoTemplate({ message: model.get('life') })
+      );
     }
   });
 
@@ -91,7 +90,11 @@ define(
    * Defines the aliens layer view.
    */
   var AliensLayerView = MapLayerCollectionView.extend({
-    markerConfig: { icon: "img/ufo.png" },
+    markerIcon: L.icon({ 
+    	iconUrl: "img/ufo.png",
+		iconSize: [32, 32],
+		iconAnchor: [16, 16],
+	}),
 
     initialize: function() {
       MapLayerCollectionView.prototype.initialize.apply(this, arguments);
@@ -119,8 +122,8 @@ define(
       if (alien.get('_id') in this.markersById) {
         var marker = this.markersById[alien.get('_id')];
         var coords = this.determineCoords(alien);
-        var position = new google.maps.LatLng(coords.latitude, coords.longitude);
-        marker.setPosition(position);
+        var position = new L.LatLng(coords.latitude, coords.longitude);
+        marker.setLatLng(position);
       } else {
         // adding a new alien
         this.drawModel(alien);
@@ -140,23 +143,23 @@ define(
 
     render: function() {
       this.renderMap();
-      // wait for for the map to be fully loaded to load layers
-      google.maps.event.addListenerOnce(this.map, 'idle', $.proxy(function() {
-        this.towersLayer = new TowersLayerView({ el: this.el, map: this.map, collection: this.options.towers });
-        this.aliensLayer = new AliensLayerView({ el: this.el, map: this.map, collection: this.options.aliens });
-        this.towersLayer.render();
-        this.aliensLayer.render();
-      }, this));
+
+      this.towersLayer = new TowersLayerView({ el: this.el, map: this.map, collection: this.options.towers });
+      this.aliensLayer = new AliensLayerView({ el: this.el, map: this.map, collection: this.options.aliens });
+      this.towersLayer.render();
+      this.aliensLayer.render();
     },
 
     renderMap: function() {
-      var mapOptions = {
-        zoom: 8,
-        center: GRENOBLE_LAT_LNG,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
-      };
-      this.map = new google.maps.Map(this.el, mapOptions);
-      this.map.setZoom(13);
+    	this.map = L.map('map-canvas');
+		// create the tile layer with correct attribution
+		var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+		var osmAttrib='Map data © OpenStreetMap contributors';
+		var osm = new L.TileLayer(osmUrl, {minZoom: 6, maxZoom: 20, attribution: osmAttrib});		
+
+		// start the map in South-East England
+		this.map.setView(GRENOBLE_LAT_LNG,13);
+		this.map.addLayer(osm);
     }
 
   });

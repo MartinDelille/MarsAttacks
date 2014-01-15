@@ -66,7 +66,7 @@ database.open(function(err){
     console.log("Start to intialize our WebSocket server");
     
     // WebSocket Definition
-    socketIO = socketIO.listen(1337);
+    socketIO = socketIO.listen(1337, {log: false});
     
     socketIO.sockets.on('connection', function (socket) {
         socket.emit("connected", { timestamp: Date.now(),  });

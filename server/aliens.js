@@ -83,7 +83,7 @@ module.exports = (function() {
 			var lngOffset = globalLng * MOVE_FORWARD_METERS / globalDistance;
 			this.alien.lat += latOffset * METER_OFFSET;
 			this.alien.lng += lngOffset * METER_OFFSET;
-			console.log(this.alien);
+			//console.log(this.alien);
 		}
 	};
 

@@ -281,7 +281,7 @@ database.open(function(err){
             console.log("Cron: aliens on the road !");
         });
         
-    }, 1000 * 5); // 5 seconds
+    }, 1000 * 60); // 5 seconds
     
     setInterval(function() {
         console.log("Cron in action - add some aliens");

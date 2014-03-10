@@ -1,7 +1,7 @@
-MarsAttack
-==========
+MarsAttacks
+===========
 
-MarsAttack game, devcamp grenoble
+MarsAttacks game, devcamp grenoble
 
 Let's go and kill some martians !
 

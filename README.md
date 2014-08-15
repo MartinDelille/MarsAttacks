@@ -12,8 +12,12 @@ Please be sure to have nodejs, jamjs (use for dependency management for webapp) 
 *   jamjs : http://jamjs.org/
 *   mongodb : http://www.mongodb.org/
 
-After cloning the repo, cd to webapp/ and perform the following command on your webapp to install required deps:
-	jam install
+After cloning the repo, perform the following command on your webapp to install required dependencies:
+
+```
+cd webapp
+jam install
+```
 
 ## Local development ##
 
@@ -23,7 +27,7 @@ You will need a local web server to be able to run the application locally. Here
 
 ```
 <VirtualHost *:80>
-    <Directory "<YOUR ROOT>">
+    <Directory "/path/to/the/marsattacksfolder/webapp">
       Options Indexes FollowSymLinks
       AllowOverride None
       Order allow,deny
@@ -38,6 +42,15 @@ You will need a local web server to be able to run the application locally. Here
 </VirtualHost>
 ```
 
-Make sure to point redirect the domain name to your local server in _/etc/hosts_ :
+Make sure to point redirect the domain name to your local server in _/etc/hosts_:
 
-	127.0.0.1	www.marsattacks.me marsattacks.me
+```
+127.0.0.1	www.marsattacks.me marsattacks.me
+```
+
+Start the server:
+
+```
+cd server
+node server.js
+```

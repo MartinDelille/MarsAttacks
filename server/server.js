@@ -58,7 +58,7 @@ var
 console.log("Open the database");
 database.open(function(err){
     if(err){
-        console.log("An error occured with the database")
+        console.log("ERROR: Please make sure MongoDB is running!");
         process.exit(1);
     }
     

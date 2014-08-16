@@ -62,7 +62,7 @@ define(
    * Defines the towers layer view.
    */
   var TowersLayerView = MapLayerCollectionView.extend({
-    markerIcon: L.icon({ 
+    markerIcon: L.icon({
     	iconUrl: "img/tower.png",
 		iconSize: [46, 46],
 		iconAnchor: [23, 23],
@@ -130,7 +130,7 @@ define(
     }
 
   });
-  
+
   /**
    * High-level view to control the whole map.
    */
@@ -164,8 +164,10 @@ define(
         var self = this;
 
         function success(position) {
+            console.log("Current position: " + position.coords.latitude + "/" + position.coords.longitude);
             var lPos = new L.LatLng(position.coords.latitude, position.coords.longitude);
             self.map.setView(lPos, 13);
+            $("#build-tower").addClass("build-tower-active");
         }
 
         function error() {
@@ -198,7 +200,7 @@ define(
           // adding a tower
           self.collection.create({
             latitude: position.coords.latitude , longitude : position.coords.longitude, life : 100
-          });          
+          });
         });
       }
     }
@@ -209,7 +211,7 @@ define(
     init: function() {
       var towers = new TowerModel.collection();
       var aliens = new AlienModel.collection();
-      var mapView = new MapView({ 
+      var mapView = new MapView({
         towers: towers,
         aliens: aliens
       }).render();

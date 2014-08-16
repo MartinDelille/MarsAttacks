@@ -52,19 +52,36 @@ html, body {
 
 /* Controls */
 
-#controls { position: absolute; width: 100%; bottom: 0; height: 70px; overflow: hidden; }
+#controls {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  height: 70px;
+  overflow: hidden;
+}
 
 /* button transitions */
 #controls #build-tower {
-	transition-property: height;
+  border-radius: 0;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+  display: inline-block;
+  height: 40px;
+
+	transition-property: height, bottom;
 	transition-duration: 0.2s;
 	transition-timing-function: ease-out;
 
 	position: absolute;
-	bottom: 0px;
+	bottom: -40px;
 	left: 50%;
 	margin-left: -65px;
 }
 
-#controls #build-tower { border-radius: 0; border-top-left-radius: 30px; border-top-right-radius: 30px; display: inline-block; height: 40px; }
-#controls #build-tower:hover { height: 60px; }
+#controls #build-tower:hover {
+  height: 60px;
+}
+
+#controls #build-tower.build-tower-active {
+  bottom:0px;
+}

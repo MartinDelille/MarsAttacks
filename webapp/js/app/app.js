@@ -163,18 +163,18 @@ define(
         console.log("Navigator has geolocalisation");
         var self = this;
 
-        function success(position) {
+        function successCallback(position) {
             console.log("Current position: " + position.coords.latitude + "/" + position.coords.longitude);
             var lPos = new L.LatLng(position.coords.latitude, position.coords.longitude);
             self.map.setView(lPos, 13);
             $("#build-tower").addClass("build-tower-active");
         }
 
-        function error() {
-          console.log("Unable to retrieve your location");
+        function errorCallback(error) {
+          console.log("ERROR(" + error.code + "): " + error.message);
         }
 
-        navigator.geolocation.getCurrentPosition(success, error);
+        navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
 			}
       else
         console.log("Navigator has no geolocalisation");

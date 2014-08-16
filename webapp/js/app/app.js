@@ -1,10 +1,9 @@
 define(
-  ["underscore", "backbone", "jquery", "js/app/models/TowerModel", "js/app/models/AlienModel"], 
+  ["underscore", "backbone", "jquery", "js/app/models/TowerModel", "js/app/models/AlienModel"],
   function(_, Backbone, $, TowerModel, AlienModel) {
 
   var GRENOBLE_LAT_LNG = new L.LatLng(45.1667, 5.7167);
 
-  
   // extension of Marker to handle some specific stuff
 
   /**
@@ -30,7 +29,7 @@ define(
      * the proper 'latitude' and 'longitude' data.
      *
      * If it's not the case, override the determineCoords method.
-     */ 
+     */
     onModelAdded: function(model) {
       this.drawModel(model);
     },
@@ -154,18 +153,29 @@ define(
 		// create the tile layer with correct attribution
 		var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 		var osmAttrib='Map data © OpenStreetMap contributors';
-		var osm = new L.TileLayer(osmUrl, {minZoom: 3, maxZoom: 18, attribution: osmAttrib});		
+		var osm = new L.TileLayer(osmUrl, {minZoom: 3, maxZoom: 18, attribution: osmAttrib});
 
-		// start the map in South-East England
-		this.map.setView(GRENOBLE_LAT_LNG,13);
+		// start the map in Grenoble:
+		this.map.setView(GRENOBLE_LAT_LNG, 2);
 		this.map.addLayer(osm);
 
       if (navigator.geolocation) {
+        console.log("Navigator has geolocalisation");
         var self = this;
-        navigator.geolocation.getCurrentPosition(function(position) {
-					self.map.setView(new L.LatLng(position.coords.latitude, position.coords.longitude), 13);
-				});
+
+        function success(position) {
+            var lPos = new L.LatLng(position.coords.latitude, position.coords.longitude);
+            self.map.setView(lPos, 13);
+        }
+
+        function error() {
+          console.log("Unable to retrieve your location");
+        }
+
+        navigator.geolocation.getCurrentPosition(success, error);
 			}
+      else
+        console.log("Navigator has no geolocalisation");
     }
 
   });

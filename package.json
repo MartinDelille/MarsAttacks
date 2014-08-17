@@ -1,0 +1,8 @@
+{
+  "name": "MarsAttacks",
+  "version": "0.1.0",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-nodemon": "^0.3.0"
+  }
+}

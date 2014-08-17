@@ -1,5 +1,5 @@
 define(
-    ["backbone", "js/app/models/SocketBroker"], 
+    ["backbone", "js/app/models/SocketBroker"],
     function(Backbone, SocketBroker) {
 
     // define tower and its collection
@@ -11,7 +11,7 @@ define(
 
     var Towers = Backbone.Collection.extend({
         url: '/backend/towers',
-        model: Tower
+        model: Tower,
 
     });
 

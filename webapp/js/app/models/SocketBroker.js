@@ -13,6 +13,6 @@ define(["socket.io"], function(io) {
       getInstance: function() {
         return socket;
       }
-    };    
+    };
 
 });

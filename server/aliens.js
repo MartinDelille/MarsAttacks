@@ -20,8 +20,8 @@ module.exports = (function() {
 			var lat2 = this.toRad(lat2);
 
 			var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-			        Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
-			var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+			        Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
+			var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 			var d = R * c;
 
 			return d;
@@ -69,8 +69,8 @@ module.exports = (function() {
 	/**
 	 * Object to manipulate alien movements.
 	 */
-	var AlienMoves = function(alien) { 
-		this.alien = alien; 
+	var AlienMoves = function(alien) {
+		this.alien = alien;
 	};
 	AlienMoves.prototype = {
 		forwardTo: function(destinationLatLng) {
@@ -90,6 +90,6 @@ module.exports = (function() {
 	return {
 		AlienFactory: new AlienFactory(),
 		AlienMoves: AlienMoves
-	} 
+	}
 
 })();

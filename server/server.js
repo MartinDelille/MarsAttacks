@@ -3,7 +3,7 @@
  * @version 1.0
  * @since 1.0
  * @author Julien Roche
- * 
+ *
  * @see http://coenraets.org/blog/2012/10/creating-a-rest-api-using-node-js-express-and-mongodb/
  * @see http://mongodb.github.io/node-mongodb-native/
  */
@@ -11,83 +11,83 @@
 console.log("Start to initialize our server");
 
 // First, load required modules
-var 
+var
     /**
      * Express instance to have some tools to produce easily our REST api
      * @type {Express}
      */
     express = require("express"),
-    
+
     /**
      * Instance of the WebSocket server
      * @type {SocketIo}
      */
     socketIO = require("socket.io"),
-    
+
     /**
      * Request instance
      * @link {Request}
      */
     request = require("request"),
-    
+
     /**
      * Mongo instance to communicate with the MongoDB instance
      * @type {MongoDB}
      */
     mongo = require('mongodb'),
-    
+
     /**
      * Express application instance
      * @type {Application}
      */
     app = express(),
-    
+
     /**
      * Instance for the Mongo Server
      * @type {MongoServer}
      */
     mongoServer = mongo.Server("localhost", 27017, { auto_reconnect: true }),
-    
+
     /**
      * Instance for ou database
      */
     database = new mongo.Db("marsAttack", mongoServer, { w: 1 }),
 
     Aliens = require('./aliens.js');
-    
+
 console.log("Open the database");
 database.open(function(err){
     if(err){
         console.log("ERROR: Please make sure MongoDB is running!");
         process.exit(1);
     }
-    
+
     console.log("Database opened");
     console.log("Start to intialize our WebSocket server");
-    
+
     // WebSocket Definition
     socketIO = socketIO.listen(1337, {log: false});
-    
+
     socketIO.sockets.on('connection', function (socket) {
         socket.emit("connected", { timestamp: Date.now(),  });
-        
+
         /*client.on("message", function () {
         }) ;
-        
+
         client.on("disconnect", function () {
         });*/
     });
-    
+
     function broadCastToClients(messageName, jsonObjectOrArray) {
         socketIO.sockets.emit(messageName, jsonObjectOrArray);
     }
-    
+
     console.log("WebSocket server is ready");
     console.log("Start to initialize our REST api");
 
     // REST api definition
     app.use(express.bodyParser()); // Set that we will use the Express parser (try to parse into JSON / form-url-encoded ...). See http://expressjs.com/api.html#bodyParser
-    
+
     /**
      * Get a battle map
      */
@@ -98,18 +98,18 @@ database.open(function(err){
                 res.send(400);
                 return;
             }
-            
+
             collection.find().toArray(function(err, items){
                 if(err){
                     res.send(400);
                     return;
                 }
-                
+
                 res.send(items);
             });
         });
     });
-    
+
     /**
      * Get all towers
      */
@@ -120,29 +120,29 @@ database.open(function(err){
                 res.send(400);
                 return;
             }
-            
+
             collection.find({ }).toArray(function(err, items){
                 if(err){
                     res.send(400);
                     return;
                 }
-                
+
                 res.send(items);
             });
         });
     });
-    
+
     /**
      * Put a new tower
      */
     app.post("/backend/towers", function(req, res) {
         console.log("A request is done on /towers on POST");
-        
+
         if(!req.body) {
             res.send(400);
             return;
         }
-        
+
         database.collection("towers", function(err, collection) {
             collection.insert(req.body, { safe:true }, function(err, result) {
                 res.send(err ? 500 : result[0]);
@@ -150,20 +150,20 @@ database.open(function(err){
             });
         });
     });
-    
+
     /**
      * Update a tower
      */
     app.post("/backend/towers/:id", function(req, res) {
         console.log("A request is done on /towers on POST");
-        
+
         database.collection("towers", function(err, collection) {
             collection.update({ "_id": new mongo.BSONPure.ObjectID(id) }, req.body, { safe:true }, function(err, result) {
                 res.send(err ? 500 : req.body);
             });
         });
     });
-    
+
 
     app.get("/backend/towers/:id", function (req, res) {
         console.log("A request is done on /towers/:id on GET");
@@ -171,12 +171,12 @@ database.open(function(err){
             if(err){
                 res.send(400);
                 return;
-            }  
+            }
             collection.find().toArray(function(err, items){
                 if(err){
                     res.send(400);
                     return;
-                } 
+                }
                 res.send(items);
             });
         });
@@ -188,7 +188,7 @@ database.open(function(err){
      */
     app["delete"]("/backend/towers/:id", function(req, res) {
         console.log("A request is done on /towers on DELETE");
-        
+
         database.collection("towers", function(err, collection) {
             collection.remove({ "_id": new mongo.BSONPure.ObjectID(req.params.id) }, { safe:true }, function(err, result) {
                 res.send(err ? 500 : req.body);
@@ -213,7 +213,7 @@ database.open(function(err){
                     broadCastToClients('aliens:add', aliens);
                     res.send(result);
                 }
-            });                
+            });
         });
     });
 
@@ -227,13 +227,13 @@ database.open(function(err){
                 res.send(400);
                 return;
             }
-            
+
             collection.find({ }).toArray(function(err, items){
                 if(err){
                     res.send(400);
                     return;
                 }
-                
+
                 res.send(items);
             });
         });
@@ -270,9 +270,9 @@ database.open(function(err){
 
     // And finally, run the server
     app.listen(8080);
-    
+
     console.log("Server started on port 8080");
-    
+
     // Start a CRON
     console.log("Now, we will start a cron timer !");
     setInterval(function() {
@@ -280,31 +280,31 @@ database.open(function(err){
         request.get("http://localhost:8080/backend/aliens/moves/forward", { }, function(){
             console.log("Cron: aliens on the road !");
         });
-        
+
     }, 1000 * 60); // 5 seconds
-    
+
     setInterval(function() {
         console.log("Cron in action - add some aliens");
         request.post("http://localhost:8080/backend/aliens", { }, function(){
             console.log("Cron: aliens added !");
         });
-        
+
     }, 1000 * 60 * 10); // 10 minutes
-    
+
     setInterval(function() {
         console.log("Cron in action - remove some aliens");
-        
+
         // Arbitraty remove some aliens !
         database.collection("aliens", function(err, collection) {
             if(err) {
                 return;
             }
-            
+
             collection.find({ }).toArray(function(err, aliens){
                 if(err){
                     return;
                 }
-                
+
                 var aliensToRemove = [];
                 for(var i = aliens.length - 1; i >= 0; --i){
                     if(Math.round(Math.random())){
@@ -312,10 +312,10 @@ database.open(function(err){
                         aliensToRemove.push(aliens[i]);
                     }
                 }
-                
+
                 broadCastToClients('aliens:delete', aliensToRemove);
             });
         });
-        
+
     }, 1000 * 60 * 60); // 60 minutes
 });

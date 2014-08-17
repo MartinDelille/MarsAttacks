@@ -89,7 +89,7 @@ define(
    * Defines the aliens layer view.
    */
   var AliensLayerView = MapLayerCollectionView.extend({
-    markerIcon: L.icon({ 
+    markerIcon: L.icon({
     	iconUrl: "img/ufo.png",
 		iconSize: [32, 32],
 		iconAnchor: [16, 16],

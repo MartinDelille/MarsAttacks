@@ -39,6 +39,8 @@ You will need a local web server to be able to run the application locally. Here
 
     ProxyPass /backend http://localhost:8080/backend
     ProxyPassReverse /backend http://localhost:8080/backend
+    ProxyPass /socket http://localhost:8080/socket
+    ProxyPassReverse /socket http://localhost:8080/socket
 </VirtualHost>
 ```
 

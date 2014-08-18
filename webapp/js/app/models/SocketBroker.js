@@ -4,7 +4,7 @@
  */
 define(["socket.io"], function(io) {
 
-    var socket = io.connect("http://www.marsattacks.me:1337");;
+    var socket = io.connect("/socket");;
     socket.on("connected", function (data) {
         console.log("We are connected: " + JSON.stringify(data));
     });

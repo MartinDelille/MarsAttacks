@@ -6,7 +6,7 @@ define(["socket.io"], function(io) {
 
     var socket = io.connect("/socket");;
     socket.on("connected", function (data) {
-        console.log("We are connected: " + JSON.stringify(data));
+        console.log("Connected to the socket: " + JSON.stringify(data));
     });
 
     return {

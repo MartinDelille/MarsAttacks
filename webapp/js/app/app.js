@@ -198,6 +198,7 @@ define(
         var self = this;
         navigator.geolocation.getCurrentPosition(function(position) {
           // adding a tower
+          console.log("Creating a tower at " + position.coords.latitude + "/" + position.coords.longitude);
           self.collection.create({
             latitude: position.coords.latitude , longitude : position.coords.longitude, life : 100
           });

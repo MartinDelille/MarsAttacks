@@ -136,7 +136,7 @@ database.open(function(err){
      * Put a new tower
      */
     app.post("/backend/towers", function(req, res) {
-        console.log("A request is done on /towers on POST");
+        console.log("A new tower was added:" + req.query);
 
         if(!req.body) {
             res.send(400);
